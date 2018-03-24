@@ -1,0 +1,56 @@
+const express = require('express')
+const router = express.Router()
+const Movie = require('../models/movie')
+const action = require('../action/action')
+// 查询热映电影
+router.get('/hotMovie', action.getMovieHasShow)
+//查询所有电影
+router.get('/movie', action.getMovie)
+//查询预售电影
+router.get('/noShowMovie', action.getNoShowMovie)
+// 通过ObjectId查询单个电影
+router.get('/movie/:id', action.getMovieById)
+// 添加一部电影
+router.post('/movie', action.addMovie)
+//更新一部电影
+router.put('/movie/:id',action.updateMovie)
+//删除一部电影
+router.delete('/movie/:id',action.deleteMovie)
+
+// 获取所有用户信息
+router.get('/user',action.getUserInfo)
+//获取单个用户信息
+router.get('/user:id',action.getUser)
+//注册用户
+router.post('/register',action.register)
+//登录
+router.post('/login',action.login)
+//删除用户
+router.delete('/user',action.deleteUser)
+//修改用户信息
+router.put('/user',action.updateUser)
+
+//添加大厅
+router.post('/hall',action.addHall)
+//删除大厅
+router.delete('/hall',action.deleteHall)
+//更新大厅
+router.put('/hall',action.updateHall)
+//查看大厅列表
+router.get('/hall',action.getHalls)
+//查看单个大厅信息
+router.get('/hall:id',action.getHallById)
+
+//添加订单
+router.post('/order',action.addOrder)
+//删除订单
+router.delete('/order',action.deleteOrder)
+//更新订单
+router.put('/order',action.updateOrder)
+//查看订单列表
+router.get('/order',action.getOrders)
+//查看单个订单信息
+router.get('/order:id',action.getOrderById)
+
+
+module.exports = router
