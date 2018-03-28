@@ -39,7 +39,7 @@ router.put('/hall',action.updateHall)
 //查看大厅列表
 router.get('/hall',action.getHalls)
 //查看单个大厅信息
-router.get('/hall:id',action.getHallById)
+router.get('/hall/:id',action.getHallById)
 
 //添加订单
 router.post('/order',action.addOrder)
@@ -50,7 +50,18 @@ router.put('/order',action.updateOrder)
 //查看订单列表
 router.get('/order',action.getOrders)
 //查看单个订单信息
-router.get('/order:id',action.getOrderById)
+router.get('/order/:id',action.getOrderById)
 
-
+//根据电影 ID 查询影院信息
+router.get('/movieToCinema/:id',action.getCinemaByMovieId)
+//添加影院
+router.post('/addCinema',action.addCinema)
+//获取影院通过用户ID
+router.get('/cinema/:id',action.getCinemaByUserId)
+//申请影院
+router.post('/apply',action.applyCinema)
+//通过申请
+router.put('/apply/:id',action.handleApply)
+//获取申请列表
+router.get('/applyList',action.getApplyList)
 module.exports = router

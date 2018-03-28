@@ -1,20 +1,20 @@
 <template lang="html">
   <div class='index'>
     <div class="gridlist-demo-container">
-       <mu-grid-list :cols="5" cellHeight="auto" class="gridlist-demo">
+       <mu-grid-list :cols="6" cellHeight="auto" class="gridlist-demo">
           <mu-sub-header>热映电影</mu-sub-header>
-          <mu-grid-tile :rows="3" v-for="item, index in hotMovieList" :key="index">
-          <img :src="item.posterUrl"/>
-          <span slot="title">{{item.nm}}</span>
-          <span slot="subTitle">{{item.dra}}</span>
+          <mu-grid-tile :rows="3" v-for="item, index in hotMovieList" :key="index" >
+            <img  @click="goToDetail(item._id)" :src="item.posterUrl"/>
+            <span slot="title">{{item.nm}}</span>
+            <span slot="subTitle">{{item.dra}}</span>
           </mu-grid-tile>
       </mu-grid-list> 
-      <mu-grid-list :cols="5" cellHeight="auto" class="gridlist-demo">
+      <mu-grid-list :cols="6" cellHeight="auto" class="gridlist-demo">
           <mu-sub-header>预售电影</mu-sub-header>
-          <mu-grid-tile :rows="3" v-for="item, index in noShowMovieList" :key="index">
-          <img :src="item.posterUrl"/>
-          <span slot="title">{{item.nm}}</span>
-          <span slot="subTitle">{{item.dra}}</span>
+          <mu-grid-tile :rows="3" v-for="item, index in noShowMovieList" :key="index" >
+            <img @click="goToDetail(item._id)" :src="item.posterUrl"/>
+            <span slot="title">{{item._id}}</span>
+            <span slot="subTitle">{{item.dra}}</span>
           </mu-grid-tile>
       </mu-grid-list> 
     </div>
@@ -40,6 +40,10 @@ export default {
         }
     },
     methods: {
+      goToDetail: function (id) {
+        console.log(11111)
+        this.$router.push(`/detail/${id}`)
+      },
       getHotMovieList: function () {
         this.$http.get('/api/hotMovie')
           .then((res)=>{

@@ -23,6 +23,12 @@ const hallSchema = mongoose.Schema({
             name: String
         }
     ],
+    movies: [
+        {
+            id: String,
+            showDate: String
+        }
+    ],
     section: {
       cols: Number,
       rows: Number,

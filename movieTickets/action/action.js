@@ -2,6 +2,7 @@
 const Movie = require('../models/movie')
 const User = require('../models/user')
 const Hall = require('../models/hall')
+const Cinema = require('../models/cinema')
 const md5 = require('md5')
 const action = {};
 action.addMovie = function (req, res) { // 添加
@@ -48,7 +49,7 @@ action.updateMovie = function (req, res) { // 更新
 }
 action.getMovieHasShow = function (req, res) { //获取热映电影
   Movie.find({hasShow: true})
-    .sort({ update_at: -1 })
+    .sort({ updateAt: -1 })
     .then(movies => {
       res.json(movies)
     })
@@ -58,7 +59,7 @@ action.getMovieHasShow = function (req, res) { //获取热映电影
 }
 action.getMovie = function (req, res) { //获取所有电影
   Movie.find({})
-    .sort({ update_at: -1 })
+    .sort({ updateAt: -1 })
     .then(movies => {
       res.json(movies)
     })
@@ -69,7 +70,7 @@ action.getMovie = function (req, res) { //获取所有电影
 
 action.getNoShowMovie = function (req, res) { //获取预售电影
   Movie.find({hasShow: false})
-    .sort({ update_at: -1 })
+    .sort({ updateAt: -1 })
     .then(movies => {
       res.json(movies)
     })
@@ -98,7 +99,7 @@ action.deleteMovie = function (req, res) { // 删除
 
 action.getUserInfo = function (req, res) {
   User.find({})
-    .sort({ update_at: -1 })
+    .sort({ updateAt: -1 })
     .then(users => {
       res.json(users)
     })
@@ -145,7 +146,11 @@ action.login = function (req, res){
       const pwd1 = md5(pwd + user.salt)
       // res.json({user:user})
       if(user.pwd === pwd1){
-        res.json({name:user.name,role:user.role})
+        res.json({
+          name:user.name,
+          role:user.role,
+          _id: user._id
+        })
       }else{
         res.json()
       }
@@ -211,7 +216,7 @@ action.updateHall = function(req, res){
 
 action.getHalls = function(req, res){
   Hall.find({})
-    .sort({ update_at: -1 })
+    .sort({ updateAt: -1 })
     .then(halls => {
       res.json(halls)
     })
@@ -263,7 +268,7 @@ action.updateOrder = function(req, res){
 
 action.getOrders = function(req, res){
   Order.find({})
-    .sort({ update_at: -1 })
+    .sort({ updateAt: -1 })
     .then(orders => {
       res.json(orders)
     })
@@ -282,6 +287,68 @@ action.getOrderById = function(req, res){
     })
 }
 
+action.addCinema = function (req, res) {
+  Cinema.create(req.body, (err, cinema) => {
+    if (err) {
+      res.json(err)
+    } else {
+      res.json(cinema)
+    }
+  })
+}
+
+action.getCinemaByMovieId = function(req, res){
+  const movieId = req.params.id
+  Cinema.find({movies: {$in: [movieId]}})
+    .then(cinema=>{
+      res.json(cinema)
+    })
+    .catch(err=>{
+      res.json(err)
+    })
+}
+
+action.applyCinema = function (req, res) {
+  Cinema.create(req.body, (err, cinema) => {
+    if (err) {
+      res.json(err)
+    } else {
+      res.json(cinema)
+    }
+  })
+}
+action.getApplyList = function (req, res) {
+  Cinema.find({})
+    .sort({updateAt:-1})
+    .then((applyList)=>{
+      res.json(applyList)
+    })
+    .catch(err=>{
+      res.json(err)
+    })
+}
+action.getCinemaByUserId = function (req, res) {
+  const userId = req.params.id
+  Cinema.find({userId:userId})
+    .sort({updateAt:-1})
+    .then(cinemaList=>{
+      res.json(cinemaList)
+    })
+    .catch(err=>{
+      res.json(err)
+    })
+}
+action.handleApply = function (req, res) {
+  Cinema.update({_id:req.params.id},{$set:{
+    apply: true
+  }})
+    .then(apply=>{
+      res.json(apply)
+    })
+    .catch(err=>{
+      res.json(err)
+    })
+}
 function createSalt(){
   const randomString = '1,2,3,4,5,6,7,8,9,0,q,w,e,r,t,y,u,i,o,p,a,s,d,f,g,h,j,k,l,z,x,c,v,b,n,m'
   const randomArray = randomString.split(',')

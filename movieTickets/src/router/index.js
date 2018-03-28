@@ -4,6 +4,11 @@ import List from 'components/List'
 import Detail from 'components/Detail'
 import Login from 'components/login'
 import Index from 'components/Index'
+import Apply from 'components/apply'
+import ApplyManage from 'components/applyManage'
+import Cinema from 'components/cinema'
+import Register from 'components/register'
+
 
 Vue.use(Router)
 
@@ -14,13 +19,33 @@ export default new Router({
       name: 'List',
       component: List
     },{
-      path : '/movie/:id',
+      path : '/detail/:id',
       name : 'detail',
       component : Detail
     },{
       path : '/login',
       name : 'login',
       component : Login
+    },
+    {
+      path : '/apply',
+      name : 'apply',
+      component : Apply
+    },
+    {
+      path : '/applyManage',
+      name : 'applyManage',
+      component : ApplyManage
+    },
+    {
+      path : '/cinema',
+      name : 'cinema',
+      component : Cinema
+    },
+    {
+      path : '/register',
+      name : 'register',
+      component : Register
     },
     {
       path : '/index',

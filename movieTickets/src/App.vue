@@ -20,6 +20,18 @@
 // import Action from '../action'
 export default {
   name: 'app',
+  created () {
+    const name = this.$localStorage.get('name')
+    const role = this.$localStorage.get('role')
+    const id = this.$localStorage.get('id')
+    if(name && role && id){
+      this.curUser = {
+        name,
+        role,
+        id
+      }
+    }
+  },
   data(){
     return {
       title  : '电影列表',
@@ -27,7 +39,8 @@ export default {
       curUser: {
         name: '',
         role: '',
-        title: ''
+        title: '',
+        id: ''
       }
     }
   }

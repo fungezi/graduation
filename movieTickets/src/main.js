@@ -4,6 +4,7 @@ import toastr from 'toastr'
 import MuseUI from 'muse-ui'
 import Vodal from 'vodal'
 import axios from 'axios'
+import VueLocalStorage from 'vue-localstorage'
 import router from './router'
 import 'toastr/build/toastr.min.css'
 import 'muse-ui/dist/muse-ui.css'
@@ -11,6 +12,7 @@ import './assets/icon.css'
 import 'vodal/fade.css'
 
 Vue.use(MuseUI)
+Vue.use(VueLocalStorage)
 Vue.prototype.$http = axios
 Vue.prototype.toastr = toastr
 Vue.component(Vodal.name,Vodal)

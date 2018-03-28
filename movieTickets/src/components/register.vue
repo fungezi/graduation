@@ -1,7 +1,7 @@
 <template lang="html">
     <div class='login'>
       <mu-card-header>
-        电影会员登录
+        电影会员注册
       </mu-card-header>
       <div class='loginText'>
         <mu-text-field v-model="name" label="用户名" v-on:blur='textFieldBlur("name")' :errorText="nameTip" labelFloat/><br/>
@@ -19,7 +19,7 @@
 export default {
   created() {
     document.title = this.$route.name
-    this.curUser.title = '登录页'
+    this.curUser.title = '注册页'
   },
   props: ['curUser'],
   data() {
