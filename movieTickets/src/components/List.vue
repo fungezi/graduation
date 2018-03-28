@@ -4,10 +4,9 @@
     <mu-table :fixedHeader="true" :showCheckbox="false" >
         <mu-thead>
           <mu-tr>
-            <mu-th>电影海报{{cat}}</mu-th>
+            <mu-th>电影海报</mu-th>
             <mu-th>电影名称</mu-th>
             <mu-th>简介</mu-th>
-            <!-- <mu-th>评分</mu-th> -->
             <mu-th>操作</mu-th>
           </mu-tr>
         </mu-thead>

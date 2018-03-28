@@ -8,7 +8,7 @@ import Apply from 'components/apply'
 import ApplyManage from 'components/applyManage'
 import Cinema from 'components/cinema'
 import Register from 'components/register'
-
+import User from 'components/user'
 
 Vue.use(Router)
 
@@ -41,6 +41,11 @@ export default new Router({
       path : '/cinema',
       name : 'cinema',
       component : Cinema
+    },
+    {
+      path : '/user',
+      name : 'user',
+      component : User
     },
     {
       path : '/register',

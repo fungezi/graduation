@@ -28,7 +28,8 @@ export default {
       this.curUser = {
         name,
         role,
-        id
+        id,
+        title: this.curUser.title
       }
     }
   },

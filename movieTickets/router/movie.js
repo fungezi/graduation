@@ -20,7 +20,7 @@ router.delete('/movie/:id',action.deleteMovie)
 // 获取所有用户信息
 router.get('/user',action.getUserInfo)
 //获取单个用户信息
-router.get('/user:id',action.getUser)
+router.get('/user/:id',action.getUser)
 //注册用户
 router.post('/register',action.register)
 //登录
@@ -28,7 +28,7 @@ router.post('/login',action.login)
 //删除用户
 router.delete('/user',action.deleteUser)
 //修改用户信息
-router.put('/user',action.updateUser)
+router.put('/user/:id',action.updateUser)
 
 //添加大厅
 router.post('/hall',action.addHall)
@@ -56,8 +56,10 @@ router.get('/order/:id',action.getOrderById)
 router.get('/movieToCinema/:id',action.getCinemaByMovieId)
 //添加影院
 router.post('/addCinema',action.addCinema)
-//获取影院通过用户ID
-router.get('/cinema/:id',action.getCinemaByUserId)
+//获取影院通过用户 ID
+router.get('/cinema',action.getCinemaByUserId)
+//获取电影通过 name
+router.get('/getMovieByNameStr/:name',action.getMovieByNameStr)
 //申请影院
 router.post('/apply',action.applyCinema)
 //通过申请

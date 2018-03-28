@@ -26,7 +26,7 @@ export default {
     created() {
         document.title = this.$route.name
         this.curUser.title = '电影首页'
-        console.log(this.curUser)
+        console.log("首页",this.curUser)
         this.getHotMovieList()
         this.getNoShowMovieList()
     },

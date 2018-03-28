@@ -39,7 +39,6 @@ export default {
       })
         .then(res => {
           this.toastr.success('登录成功')
-          console.log(res.data)
           const {name, role, _id} = res.data
           this.curUser.name = name
           this.curUser.id = _id

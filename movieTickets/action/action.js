@@ -146,11 +146,13 @@ action.login = function (req, res){
       const pwd1 = md5(pwd + user.salt)
       // res.json({user:user})
       if(user.pwd === pwd1){
-        res.json({
+        const resData = {
           name:user.name,
           role:user.role,
           _id: user._id
-        })
+        }
+        req.session.user = resData
+        res.json(resData)
       }else{
         res.json()
       }
@@ -171,13 +173,11 @@ action.deleteUser = function (req, res){
 }
 
 action.updateUser = function (req, res){
-  User.findOneAndUpdate({ _id: req.params.id }
+  User.update({ _id: req.params.id }
     , {
       $set: {
         ...req.body
       }
-    }, {
-      new: true
     })
     .then(user => res.json(user))
     .catch(err => res.json(err))
@@ -328,9 +328,11 @@ action.getApplyList = function (req, res) {
     })
 }
 action.getCinemaByUserId = function (req, res) {
-  const userId = req.params.id
-  Cinema.find({userId:userId})
-    .sort({updateAt:-1})
+  if(!req.session.user) return
+  const userId = req.session.user._id
+  Cinema.find({
+    userId: userId
+  }).sort({updateAt: -1})
     .then(cinemaList=>{
       res.json(cinemaList)
     })
@@ -349,6 +351,18 @@ action.handleApply = function (req, res) {
       res.json(err)
     })
 }
+action.getMovieByNameStr = function (req, res) {
+  const name = req.params.name
+  const reg = new RegExp(name)
+  Movie.find({nm:{$regex: reg}})
+    .then(movie=>{
+      res.json(movie)
+    })
+    .catch(err=>{
+      res.json(err)
+    })
+}
+
 function createSalt(){
   const randomString = '1,2,3,4,5,6,7,8,9,0,q,w,e,r,t,y,u,i,o,p,a,s,d,f,g,h,j,k,l,z,x,c,v,b,n,m'
   const randomArray = randomString.split(',')

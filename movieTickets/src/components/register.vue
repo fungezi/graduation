@@ -5,11 +5,12 @@
       </mu-card-header>
       <div class='loginText'>
         <mu-text-field v-model="name" label="用户名" v-on:blur='textFieldBlur("name")' :errorText="nameTip" labelFloat/><br/>
+        <mu-text-field v-model="email" label="邮箱" v-on:blur='textFieldBlur("email")' :errorText="emailTip" labelFloat/><br/>
         <mu-text-field v-model="pwd" label="密码" v-on:blur='textFieldBlur("pwd")' :errorText="pwdTip" labelFloat/><br/>
     </div>
       <mu-card-actions class='btnBox'>
-        <mu-raised-button v-on:click = "login()" label="登录" class="demo-raised-button" :disabled='showLoginBtn' primary/>
-        <mu-raised-button label="注册" class="demo-raised-button" color="rgba(0,0,0,.3)" backgroundColor = "#e6e6e6"/>
+        <mu-raised-button v-on:click = "register()" label="注册" class="demo-raised-button" primary />
+        <mu-raised-button label="登录" color="rgba(0,0,0,.3)" class="demo-raised-button" backgroundColor = "#e6e6e6" :disabled='showLoginBtn' />
       </mu-card-actions>
     </mu-card>
   </div>
@@ -26,38 +27,24 @@ export default {
     return {
       nameTip: '',
       pwdTip: '',
+      emailTip: '',
       name: '',
       pwd: '',
       showLoginBtn: false
     }
   },
   methods: {
-    login: function () {
-      this.$http.post('/api/login',{
+    register: function () {
+      this.$http.post('/api/register',{
         name: this.name,
-        pwd: this.pwd
+        pwd: this.pwd,
+        email: this.email
       })
         .then(res => {
-          this.toastr.success('登录成功')
+          this.toastr.success('注册成功')
           console.log(res.data)
           const {name, role, _id} = res.data
-          this.curUser.name = name
-          this.curUser.id = _id
-          let roleName = ''
-          if(role === 1){
-            roleName = '超管'
-          }
-          if(role === 2){
-            roleName = '管理员'
-          }
-          if(role === 3){
-            roleName = '会员'
-          }
-          this.curUser.role = roleName
-          this.$localStorage.set('name',name)
-          this.$localStorage.set('role',roleName)
-          this.$localStorage.set('id',_id)
-          this.$router.push('/index')
+          this.$router.push('/login')
         })
         .catch(err => {
           this.toastr.error(`${err.message}`, 'ERROR!')
@@ -76,6 +63,12 @@ export default {
           this.pwdTip = '必填'
         }else{
           this.pwdTip = ''
+        }
+      }else if(key === 'email'){
+        if(!this.email){
+          this.emailTip = '必填'
+        }else{
+          this.emailTip = ''
         }
       }
       
