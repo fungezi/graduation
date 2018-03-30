@@ -13,7 +13,7 @@
             <mu-td>{{cinema.name}}</mu-td>
             <mu-td>{{cinema.address}}</mu-td>
             <mu-td>
-              <mu-raised-button @click="opneAddMovie()" label="添加电影" primary/>
+              <mu-raised-button @click="opneAddMovie(cinema._id)" label="添加电影" primary/>
             </mu-td> 
           </mu-tr>
         </mu-tbody>
@@ -21,10 +21,10 @@
 
       <vodal :show="addMovieModal" animation="slideDown" :width="900" :height="720" :closeButton="false">
       <div class="movieTextField">
-        <mu-auto-complete v-model="searchMovie" hintText="搜索电影" @input="handleInput" :dataSource="dataSource" @change="handlechange" />
+        <mu-auto-complete fullWidth v-model="searchMovie" hintText="搜索电影" @input="handleInput" :dataSource="dataSource" @change="handlechange" />
       </div>
       <mu-raised-button @click="closeModal" label="取消" icon="undo"  />
-      <!-- <mu-raised-button @click="editMovie" label="确定" icon="check" primary/> -->
+       <mu-raised-button @click="addMovie" label="确定" icon="check" primary/> 
     </vodal>
    </div>
 </template>
@@ -43,15 +43,37 @@ export default {
       cinemaList: [],
       dataSource: [],
       searchMovie : 'abc',
-      searchMovieId: []
+      searchMovieList: [],
+      selectMovie: {},
+      curCinema: ''
     }
   },
-  methods: {
-    handlechange () {
-
+  methods: { 
+    addMovie () { // 添加电影成功
+      this.addMovieModal = false
+      this.$http.post('/api/addMovieForCinema',{
+        movies: this.selectMovie._id,
+        cinemaId: this.curCinema
+      })
+        .then(res=>{
+          const data = res.data
+          console.log(data)
+        })
+        .catch(err=>{
+          console.log(err)
+        })
+    },
+    handlechange (value) {
+      if(value){
+        for(const i in this.searchMovieList){
+          if(this.searchMovieList[i].nm === value){
+            this.selectMovie = this.searchMovieList[i]
+          }
+        }
+      }
     },
     handleInput (value) {
-      console.log(value)
+      if(!value) return
       this.$http.get(`/api/getMovieByNameStr/${value}`)
         .then(res=>{
           const data = res.data
@@ -59,6 +81,7 @@ export default {
           for(const i in data){
             search.push(data[i].nm)
           }
+          this.searchMovieList = data
           this.dataSource = search
           console.log(data)
         })
@@ -71,10 +94,11 @@ export default {
       this.searchMovie = ''
       this.searchMovieId = []
     },
-    opneAddMovie () {
+    opneAddMovie (cinemaId) {
       this.addMovieModal = true
       this.searchMovie = ''
       this.searchMovieId = []
+      this.curCinema = cinemaId
     },
     getCinemaList () {
       const userId = this.curUser.userId
@@ -96,5 +120,9 @@ export default {
 <style lang="css" scoped>
 a {
   color: #03a9f4;
+}
+.movieTextField{
+  width: 500px;
+  margin: 30px auto;
 }
 </style>

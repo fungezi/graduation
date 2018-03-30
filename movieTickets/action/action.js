@@ -363,6 +363,21 @@ action.getMovieByNameStr = function (req, res) {
     })
 }
 
+action.addMovieForCinema = function (req, res) {
+  const {movies, cinemaId} = req.body
+  Cinema.update({_id: cinemaId},{
+    $push: {
+      movies: cinemaId
+    }
+  })
+    .then(cinema=>{
+      res.json(cinema)
+    })
+    .catch(err=>{
+      res.json(err)
+    })
+}
+
 function createSalt(){
   const randomString = '1,2,3,4,5,6,7,8,9,0,q,w,e,r,t,y,u,i,o,p,a,s,d,f,g,h,j,k,l,z,x,c,v,b,n,m'
   const randomArray = randomString.split(',')

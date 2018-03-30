@@ -58,6 +58,8 @@ router.get('/movieToCinema/:id',action.getCinemaByMovieId)
 router.post('/addCinema',action.addCinema)
 //获取影院通过用户 ID
 router.get('/cinema',action.getCinemaByUserId)
+//为影院添加 电影资源
+router.post('/addMovieForCinema',action.addMovieForCinema)
 //获取电影通过 name
 router.get('/getMovieByNameStr/:name',action.getMovieByNameStr)
 //申请影院
