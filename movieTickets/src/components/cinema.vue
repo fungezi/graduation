@@ -14,18 +14,27 @@
             <mu-td>{{cinema.address}}</mu-td>
             <mu-td>
               <mu-raised-button @click="opneAddMovie(cinema._id)" label="添加电影" primary/>
+              <mu-raised-button @click="opneAddHall(cinema._id)" label="添加大厅" primary/>
             </mu-td> 
           </mu-tr>
         </mu-tbody>
       </mu-table>
 
       <vodal :show="addMovieModal" animation="slideDown" :width="900" :height="720" :closeButton="false">
-      <div class="movieTextField">
-        <mu-auto-complete fullWidth v-model="searchMovie" hintText="搜索电影" @input="handleInput" :dataSource="dataSource" @change="handlechange" />
-      </div>
-      <mu-raised-button @click="closeModal" label="取消" icon="undo"  />
-       <mu-raised-button @click="addMovie" label="确定" icon="check" primary/> 
-    </vodal>
+        <div class="movieTextField">
+          <mu-auto-complete fullWidth v-model="searchMovie" hintText="搜索电影" @input="handleInput" :dataSource="dataSource" @change="handlechange" />
+        </div>
+        <mu-raised-button @click="closeModal('movie')" label="取消" icon="undo"  />
+        <mu-raised-button @click="addMovie" label="确定" icon="check" primary/> 
+      </vodal>
+
+      <vodal :show="addHallModal" animation="slideDown" :width="900" :height="720" :closeButton="false">
+        <div class="movieTextField">
+          <mu-auto-complete fullWidth v-model="searchMovie" hintText="搜索电影" @input="handleInput" :dataSource="dataSource" @change="handlechange" />
+        </div>
+        <mu-raised-button @click="closeModal('hall')" label="关闭" icon="undo"  />
+        <mu-raised-button @click="addHall" label="确定" icon="check" primary/> 
+      </vodal>
    </div>
 </template>
 
@@ -45,10 +54,17 @@ export default {
       searchMovie : 'abc',
       searchMovieList: [],
       selectMovie: {},
-      curCinema: ''
+      curCinema: '',
+      addHallModal: false
     }
   },
   methods: { 
+    addHall () {
+      this.addHallModal = false
+    },
+    opneAddHall () {
+      this.addHallModal = true
+    },
     addMovie () { // 添加电影成功
       this.addMovieModal = false
       this.$http.post('/api/addMovieForCinema',{
@@ -89,10 +105,15 @@ export default {
           console.log(err)
         })
     },
-    closeModal () {
-      this.addMovieModal = false
-      this.searchMovie = ''
-      this.searchMovieId = []
+    closeModal (type) {
+      if(type === "movie"){
+        this.addMovieModal = false
+        this.searchMovie = ''
+        this.searchMovieId = []
+      }else if(type === "hall"){
+        this.addHallModal = false
+      }
+      
     },
     opneAddMovie (cinemaId) {
       this.addMovieModal = true
