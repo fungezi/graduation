@@ -193,6 +193,13 @@ action.addHall = function(req, res){
   })
 }
 
+action.getHallByCinemaId = function(req, res){
+  const {cinemaId} = req.params
+  Hall.find({cinemaId})
+    .then(hall=>{res.json(hall)})
+    .catch(err=>{res.json(err)})
+}
+
 action.deleteHall = function(req, res){
   Hall.findOneAndRemove({
     _id: req.params.id

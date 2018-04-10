@@ -3,43 +3,16 @@ const mongoose = require('mongoose')
 const hallSchema = mongoose.Schema({
     createdAt: { type: Date, default: Date.now },
     updateAt: { type: Date, default: Date.now },
-    showDate: String,
-    showId: Number,
-    showTime: String,
-    tp: String,
-    buyNumLimit: Number,
-    cinemaId: Number,
+    cinemaId: String,
     cinemaName: String,
-    desc: String,
-    hallId: String,
     hallName: String,
-    movieId: String,
-    movieName: String,
-    originPrice: String,
-    price: String,
-    seatTypeList: [
-        {
-            icon: String,
-            name: String
-        }
-    ],
-    movies: [
-        {
-            id: String,
-            showDate: String
-        }
-    ],
     section: {
       cols: Number,
       rows: Number,
-      seats: [{
-          columns: [{
-              columnId: String,
-              seatNo: String,
-              st: String
-            }],
-          rowNum: Number
-        }]
+      seats: [[{
+        seatNo: Boolean,
+        isSale: Boolean
+      }]]
     }
 })
 

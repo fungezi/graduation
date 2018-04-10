@@ -9,6 +9,7 @@ import ApplyManage from 'components/applyManage'
 import Cinema from 'components/cinema'
 import Register from 'components/register'
 import User from 'components/user'
+import CinemaDetail from 'components/CinemaDetail'
 
 Vue.use(Router)
 
@@ -46,6 +47,11 @@ export default new Router({
       path : '/user',
       name : 'user',
       component : User
+    },
+    {
+      path : '/cinemaDetail/:cinemaId',
+      name : 'cinemaDetail',
+      component : CinemaDetail
     },
     {
       path : '/register',

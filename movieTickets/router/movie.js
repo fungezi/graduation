@@ -38,6 +38,8 @@ router.delete('/hall',action.deleteHall)
 router.put('/hall',action.updateHall)
 //查看大厅列表
 router.get('/hall',action.getHalls)
+//查看大厅通过 影院 ID
+router.get('/hall/:cinemaId',action.getHallByCinemaId)
 //查看单个大厅信息
 router.get('/hall/:id',action.getHallById)
 

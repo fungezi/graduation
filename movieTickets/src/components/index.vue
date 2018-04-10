@@ -41,7 +41,6 @@ export default {
     },
     methods: {
       goToDetail: function (id) {
-        console.log(11111)
         this.$router.push(`/detail/${id}`)
       },
       getHotMovieList: function () {
