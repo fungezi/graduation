@@ -70,4 +70,16 @@ router.post('/apply',action.applyCinema)
 router.put('/apply/:id',action.handleApply)
 //获取申请列表
 router.get('/applyList',action.getApplyList)
+
+// HALL
+
+// 大厅增加排期
+router.post('/schedule',action.addSchedule)
+// 更新大厅排期
+router.put('/schedule/:id',action.updateSchedule)
+// 获取 ALL 大厅列表
+router.get('/schedule',action.getSchedule)
+// 删除大厅列表根据 ID
+router.delete('/schedule/:id',action.deleteSchedule)
+
 module.exports = router

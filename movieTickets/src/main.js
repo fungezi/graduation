@@ -2,6 +2,7 @@ import Vue from 'vue'
 import App from './App'
 import toastr from 'toastr'
 import MuseUI from 'muse-ui'
+import {table as Etable} from 'element-ui'
 import Vodal from 'vodal'
 import axios from 'axios'
 import VueLocalStorage from 'vue-localstorage'
@@ -10,13 +11,18 @@ import 'toastr/build/toastr.min.css'
 import 'muse-ui/dist/muse-ui.css'
 import './assets/icon.css'
 import 'vodal/fade.css'
+import Datetime from 'vue-datetime'
+// You need a specific loader for CSS files
+import 'vue-datetime/dist/vue-datetime.css'
+ 
+Vue.use(Datetime)
 
 Vue.use(MuseUI)
+Vue.use(Etable)
 Vue.use(VueLocalStorage)
 Vue.prototype.$http = axios
 Vue.prototype.toastr = toastr
 Vue.component(Vodal.name,Vodal)
-
 toastr.options = {
   "closeButton": true,
   "debug": false,

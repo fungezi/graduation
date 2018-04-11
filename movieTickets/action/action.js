@@ -3,29 +3,10 @@ const Movie = require('../models/movie')
 const User = require('../models/user')
 const Hall = require('../models/hall')
 const Cinema = require('../models/cinema')
+const Schedule = require('../models/schedule')
 const md5 = require('md5')
 const action = {};
 action.addMovie = function (req, res) { // 添加
-  // const param = req.body;
-
-  // let dir = param.
-
-  // nm = String,
-  // snum = String,
-  // cat = String,
-  // src = String,
-  // dur = Number,
-  // pubDesc = String,
-  // dra = String, // 描述
-  // bgimg = String,
-  // posterUrl = String,
-  // staff = [
-  //   {
-  //     name = String,
-  //     role = String,
-  //     photo = String
-  //   }
-  // ]
   Movie.create(req.body, (err, movie) => {
     if (err) {
       res.json(err)
@@ -161,7 +142,6 @@ action.login = function (req, res){
   .catch((err)=>{
     res.json(err)
   })
-  // res.json(req.session)
 }
 
 action.deleteUser = function (req, res){
@@ -238,6 +218,56 @@ action.getHallById = function(req, res){
       res.json(hall)
     })
     .catch(err => {
+      res.json(err)
+    })
+}
+
+action.addSchedule = function (req, res) {
+  const data = req.body
+  Schedule.create({
+    ...data
+  })
+    .then(schedule=>{
+      res.json(schedule)
+    })
+    .catch(err=>{
+      res.json(err)
+    })
+}
+
+action.updateSchedule = function (req, res) {
+  const {id: scheduleId} = req.params
+  const data = req.body
+  Schedule.update({_id: scheduleId},{
+    ...data
+  })
+    .then(schedule=>{
+      res.json(schedule)
+    })
+    .catch(err=>{
+      res.json(err)
+    })
+
+}
+
+action.getSchedule = function (req, res) {
+  Schedule.find({})
+    .sort({updateAt: -1})
+    .then(schedule=>{
+      res.json(schedule)
+    })
+    .catch(err=>{
+      res.json(err)
+    })
+}
+
+action.deleteSchedule = function (req, res) {
+  const scheduleId = req.params.id
+  Schedule.delete({_id: scheduleId})
+    .then(schedule=>{
+      res.json(schedule)
+    })
+    .catch(err=>{
       res.json(err)
     })
 }
