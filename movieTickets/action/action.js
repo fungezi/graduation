@@ -251,7 +251,8 @@ action.updateSchedule = function (req, res) {
 }
 
 action.getSchedule = function (req, res) {
-  Schedule.find({})
+  const {id: hallId} = req.params
+  Schedule.find({hallId})
     .sort({updateAt: -1})
     .then(schedule=>{
       res.json(schedule)

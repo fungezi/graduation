@@ -17,10 +17,16 @@
           </mu-tr>
         </mu-tbody>
       </mu-table>
-      <mu-drawer :width="500" :open="drawerOpen" :docked="drawerDocked" @close="drawerToggle()">
+      <mu-drawer :width="700" :open="drawerOpen" :docked="drawerDocked" @close="drawerToggle()">
         <div class="scheduleList">
           <div v-for="schedule,index in curScheduleList" :key="index" class="schedule">
-
+            <mu-text-field :width="100" v-model="schedule.price" label="价格"/>
+            <mu-auto-complete v-model="schedule.movieName" hintText="搜索电影" @input="handleInput" :dataSource="dataSource" @change="handlechange" />
+            <datetime zone="Asia/Shanghai" type="datetime" v-model="schedule.showTime"></datetime>
+            <div class="scheduleOperate">
+              <mu-raised-button @click="updateSchedule(schedule._id)" label="更新" primary/>
+              <mu-raised-button @click="deleteSchedule(schedule._id)" label="删除" Secondary/>
+            </div>
           </div>
 
         </div>
@@ -71,6 +77,12 @@ export default {
     }
   },
   methods: {
+    updateSchedule (scheduleId) {
+
+    },
+    deleteSchedule (scheduleId) {
+
+    },
     handleInput (value) {
       if(!value) return
       this.$http.get(`/api/getMovieByNameStr/${value}`)
@@ -88,7 +100,6 @@ export default {
         })
     },
     handlechange (value) {
-      console.log(1,value)
       if(value){
         for(const i in this.searchDataByName){
           if(this.searchDataByName[i].nm === value){
@@ -98,6 +109,26 @@ export default {
         }
       }
       
+    },
+    getSchedule (ihallId) {
+      let {_id: hallId} = this.curHall
+      if(ihallId){
+        hallId = ihallId
+      }
+      this.$http.get(`/api/schedule/${hallId}`)
+        .then(res=>{
+          const data = res.data
+          console.log(data)
+          for(const i in data){
+            data[i].showTime = new Date(parseInt(data[i].showTime)).toISOString()
+          }
+          this.curScheduleList = data
+          console.log(data)
+        })
+        .catch(err=>{
+          console.log(err)
+        })
+
     },
     addSchedule () {
       const {hallName, _id: hallId, section: {seats, rows, cols}} = this.curHall
@@ -120,24 +151,23 @@ export default {
         seatsLimit,
         seatsNum,
         hallName,
-        hallId
+        hallId,
+        price
       }
-      console.log(data)
-      // this.$http.post('/api/schedule',{})
+      this.$http.post('/api/schedule',data)
+        .then(res=>{
+          const data = res.data
+          this.getSchedule()
+        })
+        .catch(err=>{
+          console.log(err)
+        })
     },
 
     opneHallPlain (index) {
       this.curHall = this.hallList[index]
       this.drawerOpen = true
-      this.$http.get('/api/schedule')
-        .then(res=>{
-          const data = res.data
-          this.curScheduleList = data
-          console.log(data)
-        })
-        .catch(err=>{
-          console.log(err)
-        })
+      this.getSchedule(this.hallList[index]._id)
     },
     drawerToggle () {
       const open = this.drawerOpen
@@ -147,7 +177,6 @@ export default {
         this.drawerOpen = true
       }
     },
-    getCinema(cinemaId) {},
     getHall(cinemaId) {
       this.$http
         .get(`/api/hall/${cinemaId}`)
@@ -169,5 +198,20 @@ a {
 }
 .addScheduleBtn{
   display: flex;
+}
+.scheduleList .mu-text-field{
+  width: 25%;
+}
+.vdatetime{
+  display: inline;
+}
+.scheduleOperate .mu-raised-button{
+  min-width: 40px;
+  line-height: 30px;
+  height: 30px;
+}
+.schedule{
+   padding: 5px;
+   border-bottom: 2px solid #7d56c3;
 }
 </style>

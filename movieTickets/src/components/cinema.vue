@@ -84,8 +84,8 @@ export default {
       seatsMes: {
         cols: 10,
         rows: 10,
-        seatNo: "http://p1.meituan.net/movie/bdb0531259ae1188b9398520f9692cbd1249.png",
-        seatYes: "http://p1.meituan.net/movie/9dfff6fd525a7119d44e5734ab0e9fb41244.png",
+        seatNo: "http://p1.meituan.net/movie/9dfff6fd525a7119d44e5734ab0e9fb41244.png",
+        seatYes: "http://p1.meituan.net/movie/bdb0531259ae1188b9398520f9692cbd1249.png",
         hasSale: "http://p0.meituan.net/movie/585588bd86828ed54eed828dcb89bfdd1401.png",
         seats: []
       }
