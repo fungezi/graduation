@@ -14,7 +14,9 @@ import 'vodal/fade.css'
 import Datetime from 'vue-datetime'
 // You need a specific loader for CSS files
 import 'vue-datetime/dist/vue-datetime.css'
- 
+import Slider from 'vue-mini-sliders'
+
+Vue.use(Slider) 
 Vue.use(Datetime)
 
 Vue.use(MuseUI)

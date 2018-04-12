@@ -1,7 +1,8 @@
 <template lang="html">
     <div class="detailCon">
       <mu-circular-progress class="loading" v-if="loadingData" :size="80"/>
-      <div class="detail" v-else>
+      <div :style="{'background-image':'url(' + movie.bgimg+ ')'}" class="detail" v-else>
+        
         <div class="detail-left">
           <img :src="movie.posterUrl" class="movie-poster"/>
         </div>
@@ -20,7 +21,7 @@
             </p> 
             <mu-raised-button @click="goBack" primary>{{movie.hasShow?"购买":"预购"}}</mu-raised-button> 
         </div>
-        
+        <div class="detailMask"></div>
       </div>
       <div class="movieDate">
         <p class="movieDateTitle">选择购票时间</p>
@@ -171,7 +172,6 @@ export default {
   padding: 16px;
   background-color: #fff;
 }
-
 .demo-paper{
   width: 150px;
   height: 60px;
@@ -190,7 +190,9 @@ export default {
   font-weight: 500;
 }
 .detail-right{
-  color: #b2adad;
+  color: #706f6f;
+  position: relative;
+  z-index: 2;
 }
 .detailCon{
   width: 100%;
@@ -202,6 +204,21 @@ export default {
   width: 100%;
   margin: 0px auto;
   background-color:#fff;
+  background-size: 100% auto;
+  background-repeat: no-repeat;
+  position: relative;
+}
+.detailMask{
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  background: -webkit-linear-gradient(#f0eff3d4, #f2f2f2); /* Safari 5.1 - 6.0 */
+  background: -o-linear-gradient(#f0eff3d4, #f2f2f2); /* Opera 11.1 - 12.0 */
+  background: -moz-linear-gradient(#f0eff3d4, #f2f2f2); /* Firefox 3.6 - 15 */
+  background: linear-gradient(#f0eff3d4, #f2f2f2); /* 标准的语法 */
 }
 a{
   color: #03a9f4;
@@ -222,7 +239,8 @@ a{
 }
 .detail-left{
   padding: 16px;
-  /* margin-left: 80px; */
+  z-index: 2;
+  position: relative;
 }
 .detail-right{
   display: flex;

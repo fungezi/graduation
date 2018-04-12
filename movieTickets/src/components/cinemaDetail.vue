@@ -12,7 +12,8 @@
           <mu-tr v-for="hall,index in hallList" :key="index">
             <mu-td>{{hall.hallName}}</mu-td>
             <mu-td>
-              <mu-raised-button @click="opneHallPlain(index)" label="排期" primary/>
+              <mu-raised-button @click="opneHallPlain(index)" label="手动排期" primary/>
+              <mu-raised-button @click="opneHallPlain(index)" label="智能排期" primary/>
             </mu-td> 
           </mu-tr>
         </mu-tbody>
@@ -21,18 +22,18 @@
         <div class="scheduleList">
           <div v-for="schedule,index in curScheduleList" :key="index" class="schedule">
             <mu-text-field :width="100" v-model="schedule.price" label="价格"/>
-            <mu-auto-complete v-model="schedule.movieName" hintText="搜索电影" @input="handleInput" :dataSource="dataSource" @change="handlechange" />
+            <mu-auto-complete label="电影名" v-model="schedule.movieName" hintText="搜索电影" @input="handleInput" :dataSource="dataSource" @change="uHandlechange(index,arguments)" />
             <datetime zone="Asia/Shanghai" type="datetime" v-model="schedule.showTime"></datetime>
             <div class="scheduleOperate">
-              <mu-raised-button @click="updateSchedule(schedule._id)" label="更新" primary/>
-              <mu-raised-button @click="deleteSchedule(schedule._id)" label="删除" Secondary/>
+              <mu-raised-button @click="updateSchedule(index)" label="更新" primary/>
+              <mu-raised-button @click="deleteSchedule(index)" label="删除" Secondary/>
             </div>
           </div>
 
         </div>
         <div class="addSchedule">
           <mu-text-field v-model="scheduleData.price" label="价格"/>
-          <mu-auto-complete v-model="scheduleData.movieName" hintText="搜索电影" @input="handleInput" :dataSource="dataSource" @change="handlechange" />
+          <mu-auto-complete label="电影名" v-model="scheduleData.movieName"  @input="handleInput" :dataSource="dataSource" @change="handlechange" />
           <datetime zone="Asia/Shanghai" type="datetime" v-model="scheduleData.showTime"></datetime>
           <mu-raised-button @click="addSchedule" label="添加" primary/>
         </div>
@@ -56,7 +57,7 @@ export default {
     this.curUser.title = "影院详情页";
     const { cinemaId } = this.$route.params;
     this.getHall(cinemaId);
-    this.scheduleData.showTime = new Date().toISOString()
+    // this.scheduleData.showTime = new Date().toISOString()
   },
   props: ["curUser"],
   data() {
@@ -66,6 +67,7 @@ export default {
       drawerOpen: false,
       drawerDocked: false,
       curHall: {},
+      curScheduleIndex: '',
       curScheduleList: [],
       searchDataByName: [],
       scheduleData: {
@@ -77,10 +79,25 @@ export default {
     }
   },
   methods: {
-    updateSchedule (scheduleId) {
-
+    updateSchedule (index) {
+      let {movieId, movieName, price, showTime, _id: scheduleId} = this.curScheduleList[index]
+      showTime = Date.parse(new Date(showTime))
+      const data = {
+        movieId,
+        movieName,
+        price,
+        showTime
+      }
+      this.$http.put(`/api/schedule/${scheduleId}`,data)
+        .then(res=>{
+          const data = res.data
+          this.getSchedule()
+        })
+        .catch(err=>{
+          console.log(err)
+        })
     },
-    deleteSchedule (scheduleId) {
+    deleteSchedule (index) {
 
     },
     handleInput (value) {
@@ -98,6 +115,17 @@ export default {
         .catch(err=>{
           console.log(err)
         })
+    },
+    uHandlechange (index,arg) {
+      const value = arg[0]
+      if(value){
+        for(const i in this.searchDataByName){
+          if(this.searchDataByName[i].nm === value){
+            this.curScheduleList[index].movieName= this.searchDataByName[i].nm
+            this.curScheduleList[index].movieId= this.searchDataByName[i]._id
+          }
+        }
+      }
     },
     handlechange (value) {
       if(value){
@@ -158,6 +186,13 @@ export default {
         .then(res=>{
           const data = res.data
           this.getSchedule()
+          const scheduleData = {
+            movieName: '',
+            movieId: '',
+            showTime: '',
+            price: ''
+          }
+          this.scheduleData = scheduleData
         })
         .catch(err=>{
           console.log(err)

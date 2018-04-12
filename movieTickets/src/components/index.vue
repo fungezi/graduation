@@ -1,5 +1,8 @@
 <template lang="html">
   <div class='index'>
+    <div class="slidersContainer">
+      <Slider :sliders="sliders"  />
+    </div>
     <div class="gridlist-demo-container">
        <mu-grid-list :cols="6" cellHeight="auto" class="gridlist-demo">
           <mu-sub-header>热映电影</mu-sub-header>
@@ -32,12 +35,29 @@ export default {
     },
     props: ['curUser'],
     data() {
-        return {
-          rows: 3,
-          cols: 5,
-          hotMovieList: [],
-          noShowMovieList: []
+      return {
+        rows: 3,
+        cols: 5,
+        hotMovieList: [],
+        noShowMovieList: [],
+        sliders: {
+          data: [
+            {
+              src: 'http://p0.meituan.net/mmc/310f9db7b4b193d5ed49d8ee3b29434d178539.jpg', //图片地址
+              url: 'https://www.shixiseng.com/mx2018' //链接跳转地址
+            },
+            {
+              src: 'http://p0.meituan.net/mmc/ce724f4a95af6ae4a6bd12391492511d140247.jpg', //图片地址
+              url: 'https://www.shixiseng.com/mx2018' //链接跳转地址
+            }
+          ],//传入图片地址和链接跳转地址，必选
+          interval: 3000, //轮播动画时间，可选（默认3000ms）
+          target: '_blank', //跳转方式，可选（默认_self）
+          width:"1075px",//图片宽度，可选（默认800px）
+          height:"333px",//图片高度，可选（默认400px）
+          name: 'move' //轮播图动画方式，可选（默认move）
         }
+      }
     },
     methods: {
       goToDetail: function (id) {
@@ -81,5 +101,18 @@ a {
 }
 .index{
   width: 100%;
+}
+.slidersContainer{
+  display: inline-block;
+  margin: 16px auto;
+}
+.gridlist-demo-container{
+  width: 1075px;
+  margin: 0px auto;
+  background-color: #ffffff;
+  padding: 16px;
+}
+.index{
+  background-color: #f2f2f2;
 }
 </style>
