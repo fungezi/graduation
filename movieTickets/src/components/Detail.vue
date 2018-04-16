@@ -42,8 +42,14 @@
       <div class="movieAddress">
         <p class="movieDateTitle">选择电影院</p>
         <div class="cinemas">
-          <div class="cinema" v-for="cinema,index in cinema" :key="index" @click="getCurCinema(cinema._id)">
-            {{cinema.name}}({{cinema.address}}) 距离：{{cinema.distance}}
+          <div class="cinema" v-for="schedule,index in schedule" :key="index" @click="getCurCinema(schedule._id)">
+            <div class="movieMessage">
+              <!-- 上映时间 影院名 影院地址 价格 -->
+              <span><label>影院名：</label>{{schedule.cinema.name}}</span> |
+              <span><label>详细地址：</label>{{schedule.cinema.address.detailAddress}}</span> |
+              <span><label>上映时间：</label>{{new Date(parseInt(schedule.showTime))}}</span> |
+              <span><label>价格：</label>￥{{schedule.price}}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -79,15 +85,23 @@ export default {
       loadingData : true,
       date: [],
       cinema: [],
+      schedule: [],
       curDate: '',
       curCinema: '',
       gotDate: false
     }
   },
   methods: {
-    payIt () {
-      this.getCinema()
+    getSchemule () {
+      if(this.address.district && this.curDate){
+        setTimeout(()=>{
+          this.getCinema()
+        },300)
+      }
     },
+    // payIt () {
+    //   this.getCinema()
+    // },
     getCurDate (e,index) {
       const dateModule = this.date
       this.curDate = dateModule[index].time
@@ -95,6 +109,7 @@ export default {
         dateModule[i].bgColor = ''
       }
       dateModule[index].bgColor = '#7d56c3'
+      this.getSchemule()
     },
     getCinema (movieId) {
       if(!movieId){
@@ -111,7 +126,16 @@ export default {
           const data = res.data
           if(!!data){
             console.log(this.cinema)
-            this.cinema = data
+            const {schedule, cinema} = data
+            for(let i = 0;i<schedule.length;i++){
+              for(let j = 0;j<cinema.length;j++){
+                if(schedule[i].cinemaId === cinema[j]._id){
+                  schedule[i].cinema = cinema[j]
+                }
+              }
+            }
+            console.log(schedule)
+            this.schedule = schedule
           }
         })
         .catch(err=>{
@@ -179,12 +203,15 @@ export default {
 </script>
 
 <style lang="css" scoped>
+.movieMessage label{
+  color: #706f6f;
+}
 .dateByn{
   height: 100%;
 }
 .addressPicker{
   margin: 16px;
-  display: inline-block;
+  float: left;
 }
 .cinemas{
   overflow: hidden;
@@ -199,6 +226,7 @@ export default {
   padding: 4px;
   float: left;
   border-radius: 2px;
+  margin: 8px 0;
 }
 .movieAddress{
   background-color: #fff;
