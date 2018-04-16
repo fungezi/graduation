@@ -15,7 +15,9 @@ import Datetime from 'vue-datetime'
 // You need a specific loader for CSS files
 import 'vue-datetime/dist/vue-datetime.css'
 import Slider from 'vue-mini-sliders'
+import addressPicker from 'vue-address-picker'
 
+Vue.use(addressPicker)
 Vue.use(Slider) 
 Vue.use(Datetime)
 

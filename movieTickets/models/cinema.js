@@ -3,7 +3,12 @@ const mongoose = require('mongoose')
 const cinemaSchema = mongoose.Schema({
   userId: String,
   name: String,
-  address: String,
+  address: {
+    province: String,
+    city: String,
+    district: String,
+    detailAddress: String
+  },
   distance: String,
   movies: Array,
   apply: { type: Boolean, default: false},

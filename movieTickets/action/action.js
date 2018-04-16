@@ -337,9 +337,57 @@ action.addCinema = function (req, res) {
 
 action.getCinemaByMovieId = function(req, res){
   const movieId = req.params.id
-  Cinema.find({movies: {$in: [movieId]}})
+  const { date, address, detailAddress } = req.query
+  const cinemaAddress = JSON.parse(address)
+  console.log(1,cinemaAddress.province)
+  const oneDaySeconds = 24 * 60 * 60
+  const now = (new Date()).getTime()
+  const scope = {
+    $gte: '',
+    $lte: ''
+  }
+
+  if(parseInt(date) <= now) {
+    // 今日票
+    scope.$gte = now
+    scope.$lte = parseInt(date) + oneDaySeconds * 1000
+  }else{
+    //非今日票
+    scope.$gte = parseInt(date)
+    scope.$lte = parseInt(date) + oneDaySeconds * 1000
+  }
+  // 此处分为两种情况
+  // 1.买今日票 now Date - 23:59:59
+  // 2.买非今日票 时间范围就是：24:00:00-23:59:59
+  Cinema.find({
+    movies: {
+      $in: [movieId]
+    },
+    "address.province": cinemaAddress.province,
+    "address.city": cinemaAddress.city,
+    "address.district": cinemaAddress.district
+  })
     .then(cinema=>{
-      res.json(cinema)
+      const cinemaIdList = []
+      for(const i in cinema){
+        cinemaIdList.push(cinema[i]._id)
+      }
+      Schedule.find({
+        cinemaId: {
+          $in: cinemaIdList
+        },
+        showTime: scope
+      })
+        .then(schedule=>{
+          
+          res.json({
+            schedule,
+            cinema
+          })
+        })
+        .catch(err=>{
+          res.json(err)
+        })
     })
     .catch(err=>{
       res.json(err)
@@ -405,7 +453,7 @@ action.addMovieForCinema = function (req, res) {
   const {movies, cinemaId} = req.body
   Cinema.update({_id: cinemaId},{
     $push: {
-      movies: cinemaId
+      movies: movies
     }
   })
     .then(cinema=>{

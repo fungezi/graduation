@@ -19,15 +19,24 @@
                 <mu-avatar :size="32" :src="actor.photo"/>  {{actor.role}} / {{actor.name}}
               </mu-chip>
             </p> 
-            <mu-raised-button @click="goBack" primary>{{movie.hasShow?"购买":"预购"}}</mu-raised-button> 
+            <mu-raised-button @click="payIt" primary>{{movie.hasShow?"购买":"预购"}}</mu-raised-button> 
         </div>
         <div class="detailMask"></div>
       </div>
       <div class="movieDate">
+        <p class="movieDateTitle">选择购票地点</p>
+        <div class="addressPicker">
+          <address-picker :opts="addressConfig" v-model="address"></address-picker>
+          <mu-text-field v-model="detailAddress" label="详细地址" labelFloat/>
+        </div>
+      </div>
+      <div class="movieDate">
         <p class="movieDateTitle">选择购票时间</p>
-        <mu-paper v-for="item,index in date" :key="index" class="demo-paper" :zDepth="1" @click="getCurDate()">
-          <span class="week">{{item.week}}</span>
-          <span class="date">{{item.date.month}}月<br>{{item.date.day}}日</span>
+        <mu-paper v-for="item,index in date" :key="index" class="demo-paper" :zDepth="1" >
+          <div class="dateByn" :style="{'background-color':item.bgColor }" @click="getCurDate($event,index)">
+            <span class="week">{{item.week}}</span>
+            <span class="date">{{item.date.month}}月<br>{{item.date.day}}日</span>
+          </div>
         </mu-paper>
       </div>
       <div class="movieAddress">
@@ -51,23 +60,53 @@ export default {
     this.getMovie(movieId)
     document.title = this.$route.name
     this.curUser.title = "电影详情页"
-    this.date = this.getTime()
-    this.getCinema(movieId)
+    const dateModule = this.getTime()
+    for(const i in dateModule){
+      dateModule[i].bgColor = ''
+    }
+    this.date = dateModule
+    // this.getCinema(movieId)
   },
   props: ["curUser"],
   data() {
     return {
+      detailAddress: '',
+      address: {},
+      addressConfig: {
+
+      },
       movie: {},
       loadingData : true,
       date: [],
       cinema: [],
       curDate: '',
-      curCinema: ''
+      curCinema: '',
+      gotDate: false
     }
   },
   methods: {
+    payIt () {
+      this.getCinema()
+    },
+    getCurDate (e,index) {
+      const dateModule = this.date
+      this.curDate = dateModule[index].time
+      for(const i in dateModule){
+        dateModule[i].bgColor = ''
+      }
+      dateModule[index].bgColor = '#7d56c3'
+    },
     getCinema (movieId) {
-      this.$http.get(`/api/movieToCinema/${movieId}`)
+      if(!movieId){
+        movieId = this.$route.params.id
+      }
+      this.$http.get(`/api/movieToCinema/${movieId}`,{
+        params: {
+          date: this.curDate,
+          address: this.address,
+          detailAddress: this.detailAddress
+        }
+      })
         .then(res=>{
           const data = res.data
           if(!!data){
@@ -79,33 +118,45 @@ export default {
           console.log("失败了，滴 滴滴",err)
         })
     },
-    getTime () {
+    // 地点先查询电影院ID，时间 + 电影院ID 查询排期 
+    getTime () { // 此处创建的时间都是 当天凌晨整点的时间也就是 24:00:00
       const d = []
       const weeks = ['日','一','二','三','四','五','六']
       const dates = ['今天','明天','后天']
       const oneDay = 86400000
-      const time = new Date().getTime()
+      const now = new Date()
+      let time = now.getTime()
+      const hours = now.getHours()
+      const minutes = now.getMinutes()
+      const seconds = now.getSeconds()
+      const allS = hours * 60 * 60 + minutes * 60 + seconds
+      time = (parseInt(time/1000) - allS) * 1000
       for(let i = 0;i < 14;i++){
-        const date = new Date(time + oneDay * i)
+        const curTime = time + oneDay * i
+        const date = new Date(curTime)
         const month = date.getMonth() + 1
         const day = date.getDate()
         const week = weeks[date.getDay()]
         const ddate = {
               month: month,
-              day: day
+              day: day,
+              time: curTime
             }
         if(i < 3){
           d.push({
             week: dates[i],
-            date: ddate
+            date: ddate,
+            time: curTime
           })
         }else{
           d.push({
             week: '星期'+week,
-            date: ddate
+            date: ddate,
+            time: curTime
           })
         }
       }
+      console.log(d)
       return d;
     },
     goBack() {
@@ -128,10 +179,20 @@ export default {
 </script>
 
 <style lang="css" scoped>
+.dateByn{
+  height: 100%;
+}
+.addressPicker{
+  margin: 16px;
+  display: inline-block;
+}
 .cinemas{
   overflow: hidden;
   padding: 8px;
   margin: 8px;
+}
+.dateActive{
+  background-color: #7d56c3;
 }
 .cinema{
   background-color: #f2f2f2;

@@ -159,7 +159,7 @@ export default {
 
     },
     addSchedule () {
-      const {hallName, _id: hallId, section: {seats, rows, cols}} = this.curHall
+      const {cinemaId, hallName, _id: hallId, section: {seats, rows, cols}} = this.curHall
       let { movieName, movieId, showTime, price } = this.scheduleData
       showTime = Date.parse(new Date(showTime))
       let seatsLimit = 0
@@ -171,8 +171,8 @@ export default {
           }
         }
       }
-
       const data = {
+        cinemaId,
         movieName,
         movieId,
         showTime,

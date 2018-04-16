@@ -1,7 +1,9 @@
 <template lang="html">
    <div class="applyForm">
        <mu-text-field v-model="name" label="影院名" labelFloat/>
-       <mu-text-field v-model="address" label="影院地址" labelFloat/>
+       <address-picker v-model="address"></address-picker>
+       {{address}}
+       <mu-text-field v-model="detailAddress" label="详细地址" labelFloat/>
        <mu-raised-button label="申请" @click = "applyCinema()" class="demo-raised-button" primary/>
    </div>
 </template>
@@ -16,7 +18,12 @@ export default {
   data() {
     return {
       name: '',
-      address: ''
+      detailAddress: '',
+      address: {
+        province: '',
+        city: '',
+        district: ''
+      }
     }
   },
   methods: {
@@ -24,7 +31,12 @@ export default {
       console.log(this.curUser)
       this.$http.post('/api/apply', {
         name: this.name,
-        address: this.address,
+        address: {
+          province: this.address.province,
+          city: this.address.city,
+          district: this.address.district,
+          detailAddress: this.detailAddress
+        },
         apply: false,
         userId: this.curUser.id
       })

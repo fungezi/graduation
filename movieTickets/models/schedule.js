@@ -8,6 +8,7 @@ const scheduleSchema = mongoose.Schema({
   seatsLimit: Number, // 大厅座位限制
   movieName: String,
   movieId: String,
+  cinemaId: String,
   showTime: String,
   originPrice: String,
   price: String,
