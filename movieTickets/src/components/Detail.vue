@@ -102,8 +102,8 @@ export default {
       seats: [],
       seatNo: "http://oz57y8791.bkt.clouddn.com/ban.png",
       seatYes: "http://p1.meituan.net/movie/9dfff6fd525a7119d44e5734ab0e9fb41244.png",
-      hasSale: "http://p0.meituan.net/movie/585588bd86828ed54eed828dcb89bfdd1401.png",
-      hasSelected: "http://p1.meituan.net/movie/bdb0531259ae1188b9398520f9692cbd1249.png",
+      hasSale: "http://p1.meituan.net/movie/bdb0531259ae1188b9398520f9692cbd1249.png",
+      hasSelected: "http://p0.meituan.net/movie/585588bd86828ed54eed828dcb89bfdd1401.png",
       curSchedule: '',
       seatsHasSelected: []
     }
@@ -169,22 +169,27 @@ export default {
       // console.log("orderData", orderData)
       this.$http.post(`/api/order`,orderData)
         .then(res=>{
-          const data = res.data
-          // this.$http.put(`/api/schedule/${scheduleId}`,scheduleData)
-          //   .then(res=>{
-          //     const data = res.date
-          //     console.log(22, data)
-          //   })
-          //   .catch(err=>{
-          //     console.log(err)
-          //   })
-          console.log(11, data)
+          const Odata = res.data
+          const {_id: orderId} = Odata
+          this.$http.put(`/api/scheduleForSeat/${scheduleId}`,seatHasSale)
+            .then(res=>{
+              const data = res.date
+              this.toastr.success("下单成功")
+              this.goToOrder(orderId)
+            })
+            .catch(err=>{
+              console.log(err)
+            })
+          console.log(11, Odata)
         })
         .catch(err=>{
           console.log(err)
         })
       
 
+    },
+    goToOrder (orderId) {
+      this.$router.push(`/order/:${orderId}`)
     },
     setSeat (x ,y) {
       // 座位的状态：损坏、未卖、已卖、当前选择
@@ -208,7 +213,7 @@ export default {
           row: x,
           col: y
         })
-        this.seats[x][y].icon = this.hasSale
+        this.seats[x][y].icon = this.hasSelected
       }
     
     },

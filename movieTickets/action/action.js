@@ -248,7 +248,22 @@ action.updateSchedule = function (req, res) {
     .catch(err=>{
       res.json(err)
     })
+}
 
+action.setSeatsForSchedule = function (req, res) {
+  const { id: scheduleId } = req.params
+  const data = req.body
+  Schedule.update({_id: scheduleId},{
+    $pushAll: {
+      seatHasSale: data
+    }
+  })
+    .then(schedule=>{
+      res.json(schedule)
+    })
+    .catch(err=>{
+      console.log(err)
+    })
 }
 
 action.getSchedule = function (req, res) {

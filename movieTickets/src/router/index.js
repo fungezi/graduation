@@ -10,6 +10,7 @@ import Cinema from 'components/cinema'
 import Register from 'components/register'
 import User from 'components/user'
 import CinemaDetail from 'components/CinemaDetail'
+import Order from 'components/orderDetail'
 
 Vue.use(Router)
 
@@ -62,6 +63,11 @@ export default new Router({
       path : '/index',
       name : 'index',
       component : Index
+    },
+    {
+      path : '/order/:id',
+      name : 'order',
+      component : Order
     },
     {
       path: '*',

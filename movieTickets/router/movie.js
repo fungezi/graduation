@@ -54,6 +54,7 @@ router.get('/order',action.getOrders)
 //查看单个订单信息
 router.get('/order/:id',action.getOrderById)
 
+
 //根据电影 ID 查询影院信息
 router.get('/movieToCinema/:id',action.getCinemaByMovieId)
 //添加影院
@@ -81,5 +82,7 @@ router.put('/schedule/:id',action.updateSchedule)
 router.get('/schedule/:id',action.getSchedule)
 // 删除大厅列表根据 ID
 router.delete('/schedule/:id',action.deleteSchedule)
+// 更新排期座位表
+router.put('/scheduleForSeat/:id',action.setSeatsForSchedule)
 
 module.exports = router
