@@ -19,7 +19,6 @@
                 <mu-avatar :size="32" :src="actor.photo"/>  {{actor.role}} / {{actor.name}}
               </mu-chip>
             </p> 
-            <mu-raised-button @click="payIt" primary>{{movie.hasShow?"购买":"预购"}}</mu-raised-button> 
         </div>
         <div class="detailMask"></div>
       </div>
@@ -42,7 +41,7 @@
       <div class="movieAddress">
         <p class="movieDateTitle">选择电影院</p>
         <div class="cinemas">
-          <div class="cinema" v-for="schedule,index in schedule" :key="index" @click="getCurCinema(schedule._id)">
+          <div class="cinema" v-for="schedule,index in schedule" :key="index" @click="getHall(schedule.hallId, index)">
             <div class="movieMessage">
               <!-- 上映时间 影院名 影院地址 价格 -->
               <span><label>影院名：</label>{{schedule.cinema.name}}</span> |
@@ -53,9 +52,21 @@
           </div>
         </div>
       </div>
+      <div class="movieAddress">
+        <p class="movieDateTitle">选座</p>
+        <div class="seatRows" v-for="(row,index) in seats" :key="index">
+          <div v-for="(seat,i) in row" :key="i" class="seat" @click="setSeat(index,i)">
+            <img :src="seat.icon">
+          </div>
+        </div>
+      </div>
+      <div>
+        <mu-raised-button label="立即购买" @click="createOrder" class="demo-raised-button" primary/>
+      </div>
       <div class="comment">
           暂无评论
       </div>
+    </div>
   </div>
 </template>
 
@@ -71,7 +82,6 @@ export default {
       dateModule[i].bgColor = ''
     }
     this.date = dateModule
-    // this.getCinema(movieId)
   },
   props: ["curUser"],
   data() {
@@ -88,10 +98,147 @@ export default {
       schedule: [],
       curDate: '',
       curCinema: '',
-      gotDate: false
+      gotDate: false,
+      seats: [],
+      seatNo: "http://oz57y8791.bkt.clouddn.com/ban.png",
+      seatYes: "http://p1.meituan.net/movie/9dfff6fd525a7119d44e5734ab0e9fb41244.png",
+      hasSale: "http://p0.meituan.net/movie/585588bd86828ed54eed828dcb89bfdd1401.png",
+      hasSelected: "http://p1.meituan.net/movie/bdb0531259ae1188b9398520f9692cbd1249.png",
+      curSchedule: '',
+      seatsHasSelected: []
     }
   },
   methods: {
+    createOrder () {
+      // 1. 为 hall 添加购买的座位
+        //数据准备：更新座位 售票数
+      // 2. 生成订单
+
+      // 订单数据
+
+      // price: String,
+      // order: {
+      //     movieId: String,
+      //     cinemaId: String,
+      //     cinemaName: String,
+      //     showTime: String,
+      //     hallName: String,
+      //     movieName: String,
+      //     seats: [{
+      //         row: Number,
+      //         col: Number
+      //     }],
+      // },
+      // refund: {
+      //     refundable: Boolean,
+      //     desc: String
+      // }
+
+      const {_id: scheduleId} = this.schedule[this.curSchedule]
+      const seatHasSale = this.seatsHasSelected
+      const scheduleData = {
+        seatHasSale
+      }
+      const {_id: movieId, nm: movieName} = this.movie
+      const {
+        price,
+        showTime,
+        hallId,
+        hallName,
+        cinema:{
+          name: cinemaName,
+          _id: cinemaId
+        }
+      } = this.schedule[this.curSchedule]
+      const orderData = {
+          order: {
+            movieId,
+            cinemaId,
+            cinemaName,
+            showTime,
+            hallName,
+            movieName,
+            seats: seatHasSale,
+          },
+          refund: {
+            refundable: true,
+            desc: '允许退票'
+          },
+          price
+      }
+      // console.log("orderData", orderData)
+      this.$http.post(`/api/order`,orderData)
+        .then(res=>{
+          const data = res.data
+          // this.$http.put(`/api/schedule/${scheduleId}`,scheduleData)
+          //   .then(res=>{
+          //     const data = res.date
+          //     console.log(22, data)
+          //   })
+          //   .catch(err=>{
+          //     console.log(err)
+          //   })
+          console.log(11, data)
+        })
+        .catch(err=>{
+          console.log(err)
+        })
+      
+
+    },
+    setSeat (x ,y) {
+      // 座位的状态：损坏、未卖、已卖、当前选择
+      // 1. 样式上的改变
+      
+      if(this.seats[x][y].icon === this.seatNo){
+        return
+      }
+      if(this.seats[x][y].icon === this.hasSale){
+        this.seats[x][y].icon = this.seatYes
+        const seatsHasSelected = this.seatsHasSelected
+        for(let i = 0; i<seatsHasSelected.length; i++){
+          const {row, col} = seatsHasSelected[i]
+          if(row === x && col === y){
+            seatsHasSelected.splice(i,1)
+            break
+          }
+        }
+      }else{
+        this.seatsHasSelected.push({
+          row: x,
+          col: y
+        })
+        this.seats[x][y].icon = this.hasSale
+      }
+    
+    },
+    getHall (hallId, index) {
+      this.$http.get(`/api/hallDetail/${hallId}`)
+        .then(res=>{
+          const data = res.data
+          const {seats, rows, cols} = data.section
+          const schedule = this.schedule[index]
+          for(let i = 0;i<rows;i++){
+            for(let j = 0;j<cols;j++){
+              if(seats[i][j].seatNo){
+                seats[i][j].icon = this.seatNo
+              } else {
+                seats[i][j].icon = this.seatYes
+              }
+            }
+          }
+          const seatHasSale = schedule.seatHasSale
+          for(let i = 0;i<seatHasSale.length;i++){
+            const {row, col} = seatHasSale[i]
+            seats[row][col].icon = this.hasSale
+          }
+          this.curSchedule = index
+          this.seats = seats
+        })
+        .catch(err=>{
+          console.log(err)
+        })
+    },
     getSchemule () {
       if(this.address.district && this.curDate){
         setTimeout(()=>{
@@ -203,6 +350,18 @@ export default {
 </script>
 
 <style lang="css" scoped>
+.seatRows{
+  overflow: hidden;
+}
+.seat{
+  width: 30px;
+  float: left;
+  padding: 4px;
+}
+.seat img{
+  width: 100%;
+  display: block;
+}
 .movieMessage label{
   color: #706f6f;
 }

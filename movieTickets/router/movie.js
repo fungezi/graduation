@@ -41,7 +41,7 @@ router.get('/hall',action.getHalls)
 //查看大厅通过 影院 ID
 router.get('/hall/:cinemaId',action.getHallByCinemaId)
 //查看单个大厅信息
-router.get('/hall/:id',action.getHallById)
+router.get('/hallDetail/:id',action.getHallById)
 
 //添加订单
 router.post('/order',action.addOrder)

@@ -4,6 +4,7 @@ const User = require('../models/user')
 const Hall = require('../models/hall')
 const Cinema = require('../models/cinema')
 const Schedule = require('../models/schedule')
+const Order = require('../models/order')
 const md5 = require('md5')
 const action = {};
 action.addMovie = function (req, res) { // 添加
@@ -213,9 +214,9 @@ action.getHalls = function(req, res){
 }
 
 action.getHallById = function(req, res){
-  Hall.findById(req.params.id)
+  Hall.find({_id: req.params.id})
     .then(hall => {
-      res.json(hall)
+      res.json(hall[0])
     })
     .catch(err => {
       res.json(err)
