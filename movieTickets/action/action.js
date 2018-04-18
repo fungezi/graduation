@@ -290,7 +290,14 @@ action.deleteSchedule = function (req, res) {
 }
 
 action.addOrder = function(req, res){
-  Order.create(req.body, (err, order) => {
+  let data = req.body
+  const {_id: userId, name: userName} = req.session.user
+  data = {
+    ...data,
+    userId,
+    userName
+  }
+  Order.create(data, (err, order) => {
     if (err) {
       res.json(err)
     } else {
@@ -321,7 +328,8 @@ action.updateOrder = function(req, res){
 }
 
 action.getOrders = function(req, res){
-  Order.find({})
+  const {_id: userId} = req.session.user
+  Order.find({userId})
     .sort({ updateAt: -1 })
     .then(orders => {
       res.json(orders)

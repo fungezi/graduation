@@ -139,7 +139,7 @@ export default {
       const scheduleData = {
         seatHasSale
       }
-      const {_id: movieId, nm: movieName} = this.movie
+      const {_id: movieId, nm: movieName, posterUrl} = this.movie
       const {
         price,
         showTime,
@@ -158,6 +158,7 @@ export default {
             showTime,
             hallName,
             movieName,
+            posterUrl,
             seats: seatHasSale,
           },
           refund: {
@@ -189,7 +190,7 @@ export default {
 
     },
     goToOrder (orderId) {
-      this.$router.push(`/order/:${orderId}`)
+      this.$router.push(`/order`)
     },
     setSeat (x ,y) {
       // 座位的状态：损坏、未卖、已卖、当前选择

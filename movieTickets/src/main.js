@@ -20,7 +20,6 @@ import addressPicker from 'vue-address-picker'
 Vue.use(addressPicker)
 Vue.use(Slider) 
 Vue.use(Datetime)
-
 Vue.use(MuseUI)
 Vue.use(Etable)
 Vue.use(VueLocalStorage)

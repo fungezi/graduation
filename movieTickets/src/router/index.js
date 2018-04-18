@@ -1,16 +1,16 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import User from 'components/user'
 import List from 'components/List'
-import Detail from 'components/Detail'
 import Login from 'components/login'
 import Index from 'components/Index'
 import Apply from 'components/apply'
-import ApplyManage from 'components/applyManage'
 import Cinema from 'components/cinema'
+import Detail from 'components/Detail'
 import Register from 'components/register'
-import User from 'components/user'
+import ApplyManage from 'components/applyManage'
+import OrderDetail from 'components/orderDetail'
 import CinemaDetail from 'components/CinemaDetail'
-import Order from 'components/orderDetail'
 
 Vue.use(Router)
 
@@ -65,9 +65,9 @@ export default new Router({
       component : Index
     },
     {
-      path : '/order/:id',
+      path : '/order',
       name : 'order',
-      component : Order
+      component : OrderDetail
     },
     {
       path: '*',
