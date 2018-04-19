@@ -6,7 +6,17 @@ const commentSchema = mongoose.Schema({
     content: String,
     userId: String,
     userName: String,
-    movieId: String
+    movieId: String,
+    goodNum: {
+        type: Number,
+        default: 0
+    },
+    // type: Number //1：评论 2：回复
+    replyTarget: {
+        userId: String,
+        userName: String,
+        content: String
+    } 
 })
 
 const Comment = module.exports = mongoose.model('Comment', commentSchema) // 评论数据表

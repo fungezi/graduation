@@ -15,17 +15,18 @@
         <div class="oDetail" v-for=" order, index in orderList " :key="index">
           <div class="oMask">
             <div class="oiMask"></div>
-            <div v-show="order.order.status===1?true:false" class="payItBtn">
-              <mu-raised-button label="订单过期" class="demo-raised-button"/>
-            </div>
             <div v-show="order.order.status===2?true:false" class="payItBtn">
+              <mu-raised-button label="订单过期" class="demo-raised-button"/>
+              <mu-raised-button @click="deleteOrder(order._id)" label="删除订单" class="demo-raised-button" secondary/>
+            </div>
+            <div v-show="order.order.status===1?true:false" class="payItBtn">
               <mu-raised-button label="付款" class="demo-raised-button" secondary/>
               <mu-raised-button label="取消订单" class="demo-raised-button"/>
             </div>
           </div>
           <div class="cinemaName">
-            影院：{{order.order.cinemaName}}
-              <span class="payTime">
+            影院：{{order.order.cinemaName}}{{order.order.status}}
+              <span v-show="order.order.status === 1 ? true:false" class="payTime">
                 支付倒计时：{{ payTime }} s
               </span>
           </div>
@@ -73,6 +74,17 @@ export default {
   },
   
   methods: {
+    deleteOrder (orderId) {
+      this.$http.delete(`/api/order/${orderId}`)
+        .then(res=>{
+          const data = res.data
+          console.log(data)
+          this.getOrderList()
+        })
+        .catch(err=>{
+          console.log(err)
+        })
+    },
     payTimeHandle () {
       let timer = setInterval(()=>{
         this.payTime--
@@ -89,14 +101,14 @@ export default {
       this.$http.get(`/api/order`)
         .then(res=>{
           const data = res.data
-          for(let i = 0;i<data.length;i++){
-            if(parseInt(data[i].order.showTime) <= new Date().getTime() ) {
-              //订单状态 1：过期 2：可付款 3：无此票
-              data[i].order.status = 1
-            }else {
-              data[i].order.status = 2
-            }
-          }
+          // for(let i = 0;i<data.length;i++){
+          //   if(parseInt(data[i].order.showTime) <= new Date().getTime() ) {
+          //     //订单状态 1：过期 2：可付款 3：无此票
+          //     data[i].order.status = 1
+          //   }else {
+          //     data[i].order.status = 2
+          //   }
+          // }
           this.orderList = data
           console.log(data)
         })

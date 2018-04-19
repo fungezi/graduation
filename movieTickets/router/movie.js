@@ -46,7 +46,7 @@ router.get('/hallDetail/:id',action.getHallById)
 //添加订单
 router.post('/order',action.addOrder)
 //删除订单
-router.delete('/order',action.deleteOrder)
+router.delete('/order/:id',action.deleteOrder)
 //更新订单
 router.put('/order',action.updateOrder)
 //查看订单列表
@@ -84,5 +84,12 @@ router.get('/schedule/:id',action.getSchedule)
 router.delete('/schedule/:id',action.deleteSchedule)
 // 更新排期座位表
 router.put('/scheduleForSeat/:id',action.setSeatsForSchedule)
+
+//评论 comment
+// 添加评论
+router.post('/comment',action.addCommetn)
+// 获取评论
+router.get('/comment/:id',action.getCommentByMovieId)
+
 
 module.exports = router

@@ -5,8 +5,9 @@ const Hall = require('../models/hall')
 const Cinema = require('../models/cinema')
 const Schedule = require('../models/schedule')
 const Order = require('../models/order')
+const Comment = require('../models/comment')
 const md5 = require('md5')
-const action = {};
+const action = {}
 action.addMovie = function (req, res) { // 添加
   Movie.create(req.body, (err, movie) => {
     if (err) {
@@ -16,7 +17,32 @@ action.addMovie = function (req, res) { // 添加
     }
   })
 }
-
+action.addCommetn = function (req, res) {
+  const data = req.body
+  const {_id: userId, name: userName} = req.session.user
+  Comment.create({
+    ...data,
+    userId,
+    userName
+  })
+    .then(comment=>{
+      res.json(comment)
+    })
+    .catch(err=>{
+      res.json(err)
+    })
+}
+action.getCommentByMovieId = function (req, res) {
+  const movieId = req.params.id
+  Comment.find({movieId})
+  .sort({updateAt: -1})
+  .then(comment=>{
+    res.json(comment)
+  })
+  .catch(err=>{
+    console.log(err)
+  })
+}
 action.updateMovie = function (req, res) { // 更新
   Movie.findOneAndUpdate({ _id: req.params.id }
     , {
@@ -321,21 +347,36 @@ action.addOrder = function (req, res) {
                   s = s[0]
                   const { seatHasSale } = s
                   const { seats: iseatHasSale } = o.order
+                  console.log(iseatHasSale)
                   const nSeatHasSale = []
-                  for (let i = 0; i < seatHasSale.length; i++) {
-                    for (let j = 0; j < iseatHasSale.length; j++) {
+                  const seatHasSaleIndex = []
+                  for (let j = 0; j < iseatHasSale.length; j++) {
+                    for (let i = 0; i < seatHasSale.length; i++) {
                       if (seatHasSale[i].row === iseatHasSale[j].row && seatHasSale[i].col === iseatHasSale[j].col) {
+                        console.log("success")
+                        seatHasSaleIndex.push(i)
                         break
-                      } else {
-                        nSeatHasSale.push(seatHasSale[i])
                       }
                     }
                   }
-                  s.seatHasSale = nSeatHasSale
+                  for(let i = 0; i < seatHasSale.length; i++){
+                    if(seatHasSaleIndex.indexOf(i) > -1){
+
+                    }else{
+                      nSeatHasSale.push(seatHasSale[i])
+                    }
+                  }
                   Schedule.update({ _id: s._id }, {
                     $set: {
-                      ...s
+                      seatHasSale: nSeatHasSale
                     }
+                  }).then(ns=>{
+                    console.log("ns", ns)
+                    // res.json(ns)
+                  })
+                  .catch(err=>{
+                    console.log(err)
+                    res.json(err)
                   })
                 })
                 .catch(err => {
@@ -344,8 +385,14 @@ action.addOrder = function (req, res) {
               Order.update({ _id: o._id },
                 {
                   $set: {
-                    ...o
+                    "order.status": 2
                   }
+                })
+                .then(no=>{
+                  console.log("no",no)
+                })
+                .catch(err=>{
+                  console.log(err)
                 })
             }
           })

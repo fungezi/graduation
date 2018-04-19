@@ -1,70 +1,115 @@
 <template lang="html">
     <div class="detailCon">
-      <mu-circular-progress class="loading" v-if="loadingData" :size="80"/>
-      <div :style="{'background-image':'url(' + movie.bgimg+ ')'}" class="detail" v-else>
-        
-        <div class="detail-left">
-          <img :src="movie.posterUrl" class="movie-poster"/>
-        </div>
-        <div class="detail-right">
-            <p class="movie-title">{{ movie.nm }}</p>
-            <p class="movie-akas">导演:<span class="movie-aka">{{movie.dir}}</span></p>
-            <p class="movie-akas">类型:<span class="movie-aka">{{movie.cat}}</span></p>
-            <p class="movie-akas">来自:<span class="movie-aka">{{movie.src}}</span></p>
-            <p class="movie-akas">上映时间:<span class="movie-aka">{{movie.pubDesc}}</span></p>
-            <p class="movie-akas">简介:<span class="movie-aka">{{movie.dra}}</span></p>
-            <p class="movie-actors">
-              演员: 
-              <mu-chip backgroundColor="#fff" v-for="actor of movie.staff" class="movie-actor">
-                <mu-avatar :size="32" :src="actor.photo"/>  {{actor.role}} / {{actor.name}}
-              </mu-chip>
-            </p> 
-        </div>
-        <div class="detailMask"></div>
-      </div>
-      <div class="movieDate">
-        <p class="movieDateTitle">选择购票地点</p>
-        <div class="addressPicker">
-          <address-picker :opts="addressConfig" v-model="address"></address-picker>
-          <mu-text-field v-model="detailAddress" label="详细地址" labelFloat/>
-        </div>
-      </div>
-      <div class="movieDate">
-        <p class="movieDateTitle">选择购票时间</p>
-        <mu-paper v-for="item,index in date" :key="index" class="demo-paper" :zDepth="1" >
-          <div class="dateByn" :style="{'background-color':item.bgColor }" @click="getCurDate($event,index)">
-            <span class="week">{{item.week}}</span>
-            <span class="date">{{item.date.month}}月<br>{{item.date.day}}日</span>
+      <div class="detailinner">
+        <mu-circular-progress class="loading" v-if="loadingData" :size="80"/>
+        <div :style="{'background-image':'url(' + movie.bgimg+ ')'}" class="detail" v-else>
+          
+          <div class="detail-left">
+            <img :src="movie.posterUrl" class="movie-poster"/>
           </div>
-        </mu-paper>
-      </div>
-      <div class="movieAddress">
-        <p class="movieDateTitle">选择电影院</p>
-        <div class="cinemas">
-          <div class="cinema" v-for="schedule,index in schedule" :key="index" @click="getHall(schedule.hallId, index)">
-            <div class="movieMessage">
-              <!-- 上映时间 影院名 影院地址 价格 -->
-              <span><label>影院名：</label>{{schedule.cinema.name}}</span> |
-              <span><label>详细地址：</label>{{schedule.cinema.address.detailAddress}}</span> |
-              <span><label>上映时间：</label>{{new Date(parseInt(schedule.showTime))}}</span> |
-              <span><label>价格：</label>￥{{schedule.price}}</span>
+          <div class="detail-right">
+              <p class="movie-title">{{ movie.nm }}</p>
+              <p class="movie-akas">导演:<span class="movie-aka">{{movie.dir}}</span></p>
+              <p class="movie-akas">类型:<span class="movie-aka">{{movie.cat}}</span></p>
+              <p class="movie-akas">来自:<span class="movie-aka">{{movie.src}}</span></p>
+              <p class="movie-akas">上映时间:<span class="movie-aka">{{movie.pubDesc}}</span></p>
+              <p class="movie-akas">简介:<span class="movie-aka">{{movie.dra}}</span></p>
+              <p class="movie-actors">
+                演员: 
+                <mu-chip backgroundColor="#fff" v-for="actor of movie.staff" class="movie-actor">
+                  <mu-avatar :size="32" :src="actor.photo"/>  {{actor.role}} / {{actor.name}}
+                </mu-chip>
+              </p> 
+          </div>
+          <div class="detailMask"></div>
+        </div>
+        <div class="movieDate">
+          <p class="movieDateTitle">选择购票地点</p>
+          <div class="addressPicker">
+            <address-picker :opts="addressConfig" v-model="address"></address-picker>
+            <mu-text-field v-model="detailAddress" label="详细地址" labelFloat/>
+          </div>
+        </div>
+        <div class="movieDate">
+          <p class="movieDateTitle">选择购票时间</p>
+          <mu-paper v-for="item,index in date" :key="index" class="demo-paper" :zDepth="1" >
+            <div class="dateByn" :style="{'background-color':item.bgColor }" @click="getCurDate($event,index)">
+              <span class="week">{{item.week}}</span>
+              <span class="date">{{item.date.month}}月<br>{{item.date.day}}日</span>
+            </div>
+          </mu-paper>
+        </div>
+        <div class="movieAddress">
+          <p class="movieDateTitle">选择电影院</p>
+          <div class="cinemas">
+            <div class="cinema" v-for="schedule,index in schedule" :key="index" @click="getHall(schedule.hallId, index)">
+              <div class="movieMessage">
+                <!-- 上映时间 影院名 影院地址 价格 -->
+                <span><label>影院名：</label>{{schedule.cinema.name}}</span> |
+                <span><label>详细地址：</label>{{schedule.cinema.address.detailAddress}}</span> |
+                <span><label>上映时间：</label>{{new Date(parseInt(schedule.showTime))}}</span> |
+                <span><label>价格：</label>￥{{schedule.price}}</span>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="movieAddress">
-        <p class="movieDateTitle">选座</p>
-        <div class="seatRows" v-for="(row,index) in seats" :key="index">
-          <div v-for="(seat,i) in row" :key="i" class="seat" @click="setSeat(index,i)">
-            <img :src="seat.icon">
+        <div class="movieAddress">
+          <p class="movieDateTitle">选座</p>
+          <div class="seatRows" v-for="(row,index) in seats" :key="index">
+            <div v-for="(seat,i) in row" :key="i" class="seat" @click="setSeat(index,i)">
+              <img :src="seat.icon">
+            </div>
           </div>
         </div>
-      </div>
-      <div>
-        <mu-raised-button label="立即购买" @click="createOrder" class="demo-raised-button" primary/>
-      </div>
-      <div class="comment">
-          暂无评论
+        <div>
+          <mu-raised-button label="立即购买" @click="createOrder" class="demo-raised-button" primary/>
+        </div>
+        <div class="commentCon">
+            <div class="commentText">
+              <mu-text-field v-model="commentContent" hintText="随便说点啥..." multiLine :rows="2" :rowsMax="4"/>
+              <mu-raised-button label="确定" @click="addComment" class="demo-raised-button" primary/>
+            </div>
+            <div v-for=" icomment, index in commentList " :key="index" class="comment">
+              <div class="cImg">
+                <img src="http://oz57y8791.bkt.clouddn.com/%E5%A4%B4%E5%83%8F%20%E7%94%B7%E5%AD%A9.png" />
+              </div>
+              <div class="commentMes">
+                <div class="cmes">
+                  <span class="cuserName">{{icomment.userName}}:</span>
+                  <span class="ccontent">{{icomment.content}}</span>
+                </div>
+                <div v-show="icomment.replyTarget ? true : false" class="creply">
+                  <!-- <span class="cuserName">@ {{icomment.replyTarget.userName}}:</span>
+                  <span class="ccontent">{{icomment.replyComment.content}}</span> -->
+                </div>
+                <div class="ctime">
+                  <span>{{icomment.createdAt}}</span>
+                  <span class="coperate">回复</span>
+                  <span class="cgoodNum"><img :src="curGoodIcon" /><span>{{icomment.goodNum}}</span></span>
+                </div>
+              </div>
+            </div>
+            <div class="comment">
+              <div class="cImg">
+                <img src="http://oz57y8791.bkt.clouddn.com/%E5%A4%B4%E5%83%8F%20%E7%94%B7%E5%AD%A9.png" />
+              </div>
+              <div class="commentMes">
+                <div class="cmes">
+                  <span class="cuserName">zzzl大lll:</span>
+                  <span class="ccontent">暗恋这种事，就好像下了一场暴雨，我故意站在你门外，几度想要敲你的门，问你是否可以暂时借避，可是又不敢，只好一直站在雨里。</span>
+                </div>
+                <div class="creply">
+                  <span class="cuserName">@ zzzl大lll:</span>
+                  <span class="ccontent">暗恋这种事，就好像下了一场暴雨，我故意站在你门外。</span>
+                </div>
+                <div class="ctime">
+                  <span>2014年12月1日3:00</span>
+                  <span class="coperate">回复</span>
+                  <span class="cgoodNum"><img :src="curGoodIcon" /><span>100</span></span>
+                </div>
+              </div>
+            </div>
+        </div>
       </div>
     </div>
   </div>
@@ -82,15 +127,16 @@ export default {
       dateModule[i].bgColor = ''
     }
     this.date = dateModule
+    this.getComment(movieId)
   },
   props: ["curUser"],
   data() {
     return {
+      commentContent: '' ,
+      commentList: [],
       detailAddress: '',
       address: {},
-      addressConfig: {
-
-      },
+      addressConfig: {},
       movie: {},
       loadingData : true,
       date: [],
@@ -105,10 +151,57 @@ export default {
       hasSale: "http://p1.meituan.net/movie/bdb0531259ae1188b9398520f9692cbd1249.png",
       hasSelected: "http://p0.meituan.net/movie/585588bd86828ed54eed828dcb89bfdd1401.png",
       curSchedule: '',
-      seatsHasSelected: []
+      seatsHasSelected: [],
+      goodIcon1: "http://oz57y8791.bkt.clouddn.com/%E7%82%B9%E8%B5%9E.png",
+      goodIcon2: "http://oz57y8791.bkt.clouddn.com/%E7%82%B9%E8%B5%9E%20%281%29.png",
+      curGoodIcon: 'http://oz57y8791.bkt.clouddn.com/%E7%82%B9%E8%B5%9E%20%281%29.png'
     }
   },
   methods: {
+    getComment (movieId) {
+      this.$http.get(`/api/comment/${movieId}`)
+        .then(res=>{
+          const data = res.data
+          this.commentList = data
+          console.log(data)
+        })
+        .catch(err=>{
+          console.log(err)
+        })
+    },
+    addComment () {
+      // content: String,
+      // movieId: String,
+      // goodNum: {
+      //     type: Number,
+      //     default: 0
+      // },
+      // // type: Number //1：评论 2：回复
+      // replyTarget: {
+      //     userId: String,
+      //     userName: String,
+      //     content: String
+      // } 
+      const content = this.commentContent
+      const {_id: movieId} = this.movie
+      const data = {
+        content,
+        movieId
+      }
+      this.$http.post('/api/comment',data)
+        .then(res=>{
+          const data = res.data
+          this.commentContent = ''
+          this.getComment(this.$route.params.id)
+          console.log(data)
+        })
+        .catch(err=>{
+          console.log(err)
+        })
+    },
+    replyComment (user) {
+
+    },
     createOrder () {
       // 1. 为 hall 添加购买的座位
         //数据准备：更新座位 售票数
@@ -169,7 +262,6 @@ export default {
           },
           price
       }
-      // console.log("orderData", orderData)
       this.$http.post(`/api/order`,orderData)
         .then(res=>{
           const Odata = res.data
@@ -358,6 +450,74 @@ export default {
 </script>
 
 <style lang="css" scoped>
+.commentText{
+  background-color: #ffffff;
+  padding: 8px;
+}
+.commentText .mu-text-field{
+  width: 100%;
+}
+.commentCon{
+  margin: 0 auto;
+}
+.comment{
+  overflow: hidden;
+  /* border-top: 1px solid gray; */
+  margin-bottom: 8px;
+  padding: 8px;
+  background-color: #ffffff;
+}
+.coperate {
+  float: right;
+  margin-left: 8px;
+  cursor: pointer;
+}
+.creply{
+  border: 1px solid gainsboro;
+  padding: 4px 8px;
+  display: inline-block;
+}
+.cgoodNum{
+  float: right;
+}
+.ctime{
+  color: #706f6f;
+  font-size: 12px;
+}
+.cgoodNum span{
+  display: inline-block;
+  vertical-align: top;
+}
+.cgoodNum {
+  vertical-align: middle;
+  line-height: 20px;
+}
+.cgoodNum img{
+  cursor: pointer;
+  width: 20px;
+  display: inline-block;
+  font-size: 0;
+}
+.ccontent{
+  text-indent: 1em;
+  color: #4b4949;
+  font-size: 12px;
+}
+.cuserName{
+  color: #03a9f4;
+}
+.comment .cImg{
+  width: 50px;
+  float: left;
+}
+.cImg img{
+  width: 100%;
+  display: block;
+}
+.commentMes{
+  margin-left: 60px;
+  text-align: left;
+}
 .seatRows{
   overflow: hidden;
 }
@@ -449,6 +609,10 @@ export default {
   color: #706f6f;
   position: relative;
   z-index: 2;
+}
+.detailinner{
+  width: 1000px;
+  margin: 0 auto;
 }
 .detailCon{
   width: 100%;
@@ -543,11 +707,11 @@ a{
   margin-right: 12px;
 }
 .comment{
-  height: 150px;
+  /* height: 150px;
   line-height: 100px;
   color: #d6d0d0;
   width: 100%;
   font-size: 30px;
-  font-weight: 900;
+  font-weight: 900; */
 }
 </style>
