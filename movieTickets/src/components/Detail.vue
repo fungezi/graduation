@@ -65,50 +65,31 @@
           <mu-raised-button label="立即购买" @click="createOrder" class="demo-raised-button" primary/>
         </div>
         <div class="commentCon">
-            <div class="commentText">
-              <mu-text-field v-model="commentContent" hintText="随便说点啥..." multiLine :rows="2" :rowsMax="4"/>
-              <mu-raised-button label="确定" @click="addComment" class="demo-raised-button" primary/>
+          <div class="commentText">
+            <div class="replyTip">{{replyTip}}</div>
+            <mu-text-field v-model="commentContent" hintText="随便说点啥..." multiLine :rows="2" :rowsMax="4"/>
+            <mu-raised-button label="确定" @click="addComment" class="demo-raised-button" primary/>
+          </div>
+          <div v-for=" icomment, index in commentList " :key="index" class="comment">
+            <div class="cImg">
+              <img src="http://oz57y8791.bkt.clouddn.com/%E5%A4%B4%E5%83%8F%20%E7%94%B7%E5%AD%A9.png" />
             </div>
-            <div v-for=" icomment, index in commentList " :key="index" class="comment">
-              <div class="cImg">
-                <img src="http://oz57y8791.bkt.clouddn.com/%E5%A4%B4%E5%83%8F%20%E7%94%B7%E5%AD%A9.png" />
+            <div class="commentMes">
+              <div class="cmes">
+                <span class="cuserName">{{icomment.userName}}:</span>
+                <span class="ccontent">{{icomment.content}}</span>
               </div>
-              <div class="commentMes">
-                <div class="cmes">
-                  <span class="cuserName">{{icomment.userName}}:</span>
-                  <span class="ccontent">{{icomment.content}}</span>
-                </div>
-                <div v-show="icomment.replyTarget ? true : false" class="creply">
-                  <!-- <span class="cuserName">@ {{icomment.replyTarget.userName}}:</span>
-                  <span class="ccontent">{{icomment.replyComment.content}}</span> -->
-                </div>
-                <div class="ctime">
-                  <span>{{icomment.createdAt}}</span>
-                  <span class="coperate">回复</span>
-                  <span class="cgoodNum"><img :src="curGoodIcon" /><span>{{icomment.goodNum}}</span></span>
-                </div>
+              <div v-show="icomment.replyTarget && icomment.replyTarget.content ? true : false" class="creply">
+                <span class="cuserName">@ {{icomment.replyTarget?icomment.replyTarget.userName:''}}:</span>
+                <span class="ccontent">{{icomment.replyTarget?icomment.replyTarget.content:''}}</span>
               </div>
-            </div>
-            <div class="comment">
-              <div class="cImg">
-                <img src="http://oz57y8791.bkt.clouddn.com/%E5%A4%B4%E5%83%8F%20%E7%94%B7%E5%AD%A9.png" />
-              </div>
-              <div class="commentMes">
-                <div class="cmes">
-                  <span class="cuserName">zzzl大lll:</span>
-                  <span class="ccontent">暗恋这种事，就好像下了一场暴雨，我故意站在你门外，几度想要敲你的门，问你是否可以暂时借避，可是又不敢，只好一直站在雨里。</span>
-                </div>
-                <div class="creply">
-                  <span class="cuserName">@ zzzl大lll:</span>
-                  <span class="ccontent">暗恋这种事，就好像下了一场暴雨，我故意站在你门外。</span>
-                </div>
-                <div class="ctime">
-                  <span>2014年12月1日3:00</span>
-                  <span class="coperate">回复</span>
-                  <span class="cgoodNum"><img :src="curGoodIcon" /><span>100</span></span>
-                </div>
+              <div class="ctime">
+                <span>{{icomment.createdAt}}</span>
+                <span @click="replyComment(icomment)" class="coperate">回复</span>
+                <span class="cgoodNum"><img :src="curGoodIcon" /><span>{{icomment.goodNum}}</span></span>
               </div>
             </div>
+          </div>
         </div>
       </div>
     </div>
@@ -132,8 +113,10 @@ export default {
   props: ["curUser"],
   data() {
     return {
+      replyTip: '',
       commentContent: '' ,
       commentList: [],
+      replyTarget: {},
       detailAddress: '',
       address: {},
       addressConfig: {},
@@ -162,8 +145,16 @@ export default {
       this.$http.get(`/api/comment/${movieId}`)
         .then(res=>{
           const data = res.data
+          for(let i = 0; i<data.length;i++){
+            if(!data[i].replyTarget || !data[i].replyTarget.content){
+              data[i].replyTarget = {
+                content: '',
+                userName: '',
+                userId:''
+              }
+            }
+          }
           this.commentList = data
-          console.log(data)
         })
         .catch(err=>{
           console.log(err)
@@ -182,16 +173,28 @@ export default {
       //     userName: String,
       //     content: String
       // } 
-      const content = this.commentContent
+      let content = this.commentContent
       const {_id: movieId} = this.movie
       const data = {
         content,
         movieId
       }
+      if(this.replyComment.userName && this.replyComment.content){
+        data.replyTarget = this.replyComment
+      }
       this.$http.post('/api/comment',data)
         .then(res=>{
           const data = res.data
           this.commentContent = ''
+          for(let  i = 0;i< data.length;i++){
+            if(!data[i].replyTarget){
+              data[i].isReply = false
+            }else{
+              data[i].isReply = true
+            }
+          }
+          this.replyComment = {}
+          this.replyTip = ''
           this.getComment(this.$route.params.id)
           console.log(data)
         })
@@ -199,8 +202,15 @@ export default {
           console.log(err)
         })
     },
-    replyComment (user) {
-
+    replyComment (comment) {
+      const {userId, userName, content} = comment
+      this.replyComment = {
+        userName,
+        userId,
+        content
+      }
+      this.replyTip = `回复 ${userName}`
+      // this.commentContent = `@ ${userName}：`
     },
     createOrder () {
       // 1. 为 hall 添加购买的座位
@@ -459,6 +469,9 @@ export default {
 }
 .commentCon{
   margin: 0 auto;
+}
+.replyTip{
+  font-size: 12px;
 }
 .comment{
   overflow: hidden;

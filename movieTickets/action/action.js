@@ -481,9 +481,7 @@ action.getCinemaByMovieId = function (req, res) {
   // 1.买今日票 now Date - 23:59:59
   // 2.买非今日票 时间范围就是：24:00:00-23:59:59
   Cinema.find({
-    movies: {
-      $in: [movieId]
-    },
+    movies: movieId,
     "address.province": cinemaAddress.province,
     "address.city": cinemaAddress.city,
     "address.district": cinemaAddress.district
@@ -494,6 +492,7 @@ action.getCinemaByMovieId = function (req, res) {
         cinemaIdList.push(cinema[i]._id)
       }
       Schedule.find({
+        movieId,
         cinemaId: {
           $in: cinemaIdList
         },
