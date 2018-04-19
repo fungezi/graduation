@@ -7,11 +7,13 @@ const orderSchema = mongoose.Schema({
     userId: String,
     userName: String,
     order: {
+        scheduleId: String,
         movieId: String,
         cinemaId: String,
         cinemaName: String,
         showTime: String,
         hallName: String,
+        status: Number, // 1：订单超时 2：订单未超时 3：订单已付款
         posterUrl: String,
         movieName: String,
         seats: [{

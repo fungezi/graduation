@@ -23,7 +23,12 @@
               <mu-raised-button label="取消订单" class="demo-raised-button"/>
             </div>
           </div>
-          <div class="cinemaName">影院：{{order.order.cinemaName}}</div>
+          <div class="cinemaName">
+            影院：{{order.order.cinemaName}}
+              <span class="payTime">
+                支付倒计时：{{ payTime }} s
+              </span>
+          </div>
           <div class="ticket">
             <span class="img"><img class="imgCon" :src="order.order.posterUrl"></span>
             <span class="movieName">{{order.order.movieName}}</span>
@@ -52,6 +57,7 @@ export default {
     const { id: orderId } = this.$route.params;
     // this.getOrderDetail(orderId);
     this.getOrderList()
+    this.payTimeHandle()
   },
   mounted () {
     this.triggerSeats = this.$refs.button.$el
@@ -61,11 +67,21 @@ export default {
     return {
       seatValue: "座位详情",
       order: {},
-      orderList: []
+      orderList: [],
+      payTime: 60
     };
   },
   
   methods: {
+    payTimeHandle () {
+      let timer = setInterval(()=>{
+        this.payTime--
+        if(this.payTime <= 0){
+          clearInterval(timer)
+          this.payTime = 0
+        }
+      },1000)
+    },
     handleSeatsClose (value) {
       this.value = value
     },
@@ -118,6 +134,10 @@ export default {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
+}
+.payTime{
+  float: right;
+  color: #f37474;
 }
 .oDetail:hover .oMask{
   display: block;

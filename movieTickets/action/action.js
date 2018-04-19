@@ -30,7 +30,7 @@ action.updateMovie = function (req, res) { // 更新
     .catch(err => res.json(err))
 }
 action.getMovieHasShow = function (req, res) { //获取热映电影
-  Movie.find({hasShow: true})
+  Movie.find({ hasShow: true })
     .sort({ updateAt: -1 })
     .then(movies => {
       res.json(movies)
@@ -51,7 +51,7 @@ action.getMovie = function (req, res) { //获取所有电影
 }
 
 action.getNoShowMovie = function (req, res) { //获取预售电影
-  Movie.find({hasShow: false})
+  Movie.find({ hasShow: false })
     .sort({ updateAt: -1 })
     .then(movies => {
       res.json(movies)
@@ -100,14 +100,14 @@ action.getUser = function (req, res) {
     })
 }
 
-action.register = function (req, res){
-  const {name, pwd, email} = req.body
+action.register = function (req, res) {
+  const { name, pwd, email } = req.body
   const salt = createSalt()
   const pwd1 = md5(pwd + salt)
   User.create({
-    name:name,
-    pwd:pwd1,
-    role:3,
+    name: name,
+    pwd: pwd1,
+    role: 3,
     salt: salt,
     email: email
   }, (err, user) => {
@@ -119,33 +119,33 @@ action.register = function (req, res){
   })
 }
 
-action.login = function (req, res){
-  const {name, pwd} = req.body
-  User.find({name: name})
-  .then((user)=>{
-    user = user[0]
-    if(user){
-      const pwd1 = md5(pwd + user.salt)
-      // res.json({user:user})
-      if(user.pwd === pwd1){
-        const resData = {
-          name:user.name,
-          role:user.role,
-          _id: user._id
+action.login = function (req, res) {
+  const { name, pwd } = req.body
+  User.find({ name: name })
+    .then((user) => {
+      user = user[0]
+      if (user) {
+        const pwd1 = md5(pwd + user.salt)
+        // res.json({user:user})
+        if (user.pwd === pwd1) {
+          const resData = {
+            name: user.name,
+            role: user.role,
+            _id: user._id
+          }
+          req.session.user = resData
+          res.json(resData)
+        } else {
+          res.json()
         }
-        req.session.user = resData
-        res.json(resData)
-      }else{
-        res.json()
       }
-    }
-  })
-  .catch((err)=>{
-    res.json(err)
-  })
+    })
+    .catch((err) => {
+      res.json(err)
+    })
 }
 
-action.deleteUser = function (req, res){
+action.deleteUser = function (req, res) {
   User.findOneAndRemove({
     _id: req.params.id
   })
@@ -153,7 +153,7 @@ action.deleteUser = function (req, res){
     .catch(err => res.json(err))
 }
 
-action.updateUser = function (req, res){
+action.updateUser = function (req, res) {
   User.update({ _id: req.params.id }
     , {
       $set: {
@@ -164,7 +164,7 @@ action.updateUser = function (req, res){
     .catch(err => res.json(err))
 }
 
-action.addHall = function(req, res){
+action.addHall = function (req, res) {
   Hall.create(req.body, (err, hall) => {
     if (err) {
       res.json(err)
@@ -174,14 +174,14 @@ action.addHall = function(req, res){
   })
 }
 
-action.getHallByCinemaId = function(req, res){
-  const {cinemaId} = req.params
-  Hall.find({cinemaId})
-    .then(hall=>{res.json(hall)})
-    .catch(err=>{res.json(err)})
+action.getHallByCinemaId = function (req, res) {
+  const { cinemaId } = req.params
+  Hall.find({ cinemaId })
+    .then(hall => { res.json(hall) })
+    .catch(err => { res.json(err) })
 }
 
-action.deleteHall = function(req, res){
+action.deleteHall = function (req, res) {
   Hall.findOneAndRemove({
     _id: req.params.id
   })
@@ -189,7 +189,7 @@ action.deleteHall = function(req, res){
     .catch(err => res.json(err))
 }
 
-action.updateHall = function(req, res){
+action.updateHall = function (req, res) {
   Hall.findOneAndUpdate({ _id: req.params.id }
     , {
       $set: {
@@ -202,19 +202,19 @@ action.updateHall = function(req, res){
     .catch(err => res.json(err))
 }
 
-action.getHalls = function(req, res){
+action.getHalls = function (req, res) {
   Hall.find({})
     .sort({ updateAt: -1 })
     .then(halls => {
       res.json(halls)
     })
-    .catch(err => {                  
+    .catch(err => {
       res.json(err)
     })
 }
 
-action.getHallById = function(req, res){
-  Hall.find({_id: req.params.id})
+action.getHallById = function (req, res) {
+  Hall.find({ _id: req.params.id })
     .then(hall => {
       res.json(hall[0])
     })
@@ -228,24 +228,24 @@ action.addSchedule = function (req, res) {
   Schedule.create({
     ...data
   })
-    .then(schedule=>{
+    .then(schedule => {
       res.json(schedule)
     })
-    .catch(err=>{
+    .catch(err => {
       res.json(err)
     })
 }
 
 action.updateSchedule = function (req, res) {
-  const {id: scheduleId} = req.params
+  const { id: scheduleId } = req.params
   const data = req.body
-  Schedule.update({_id: scheduleId},{
+  Schedule.update({ _id: scheduleId }, {
     ...data
   })
-    .then(schedule=>{
+    .then(schedule => {
       res.json(schedule)
     })
-    .catch(err=>{
+    .catch(err => {
       res.json(err)
     })
 }
@@ -253,60 +253,110 @@ action.updateSchedule = function (req, res) {
 action.setSeatsForSchedule = function (req, res) {
   const { id: scheduleId } = req.params
   const data = req.body
-  Schedule.update({_id: scheduleId},{
+  Schedule.update({ _id: scheduleId }, {
     $pushAll: {
       seatHasSale: data
     }
   })
-    .then(schedule=>{
+    .then(schedule => {
       res.json(schedule)
     })
-    .catch(err=>{
+    .catch(err => {
       console.log(err)
     })
 }
 
 action.getSchedule = function (req, res) {
-  const {id: hallId} = req.params
-  Schedule.find({hallId})
-    .sort({showTime: -1})
-    .then(schedule=>{
+  const { id: hallId } = req.params
+  Schedule.find({ hallId })
+    .sort({ showTime: -1 })
+    .then(schedule => {
       res.json(schedule)
     })
-    .catch(err=>{
+    .catch(err => {
       res.json(err)
     })
 }
 
 action.deleteSchedule = function (req, res) {
   const scheduleId = req.params.id
-  Schedule.delete({_id: scheduleId})
-    .then(schedule=>{
+  Schedule.delete({ _id: scheduleId })
+    .then(schedule => {
       res.json(schedule)
     })
-    .catch(err=>{
+    .catch(err => {
       res.json(err)
     })
 }
 
-action.addOrder = function(req, res){
+action.addOrder = function (req, res) {
   let data = req.body
-  const {_id: userId, name: userName} = req.session.user
+  const { _id: userId, name: userName } = req.session.user
   data = {
     ...data,
     userId,
     userName
   }
   Order.create(data, (err, order) => {
+
+    const {
+      _id: orderId,
+      order: {
+        scheduleId
+      } } = order
     if (err) {
       res.json(err)
     } else {
+      setTimeout(() => {// 在 60 秒之后若是没支付订单就撤销订单 并将座位预定取消
+        Order.find({ _id: orderId })
+          .then(o => {
+            o = o[0]
+            const { order: {
+              status
+            } } = o
+            if (status != 3) {
+              o.order.status = 2
+              Schedule.find({ _id: o.order.scheduleId })
+                .then(s => {
+                  s = s[0]
+                  const { seatHasSale } = s
+                  const { seats: iseatHasSale } = o.order
+                  const nSeatHasSale = []
+                  for (let i = 0; i < seatHasSale.length; i++) {
+                    for (let j = 0; j < iseatHasSale.length; j++) {
+                      if (seatHasSale[i].row === iseatHasSale[j].row && seatHasSale[i].col === iseatHasSale[j].col) {
+                        break
+                      } else {
+                        nSeatHasSale.push(seatHasSale[i])
+                      }
+                    }
+                  }
+                  s.seatHasSale = nSeatHasSale
+                  Schedule.update({ _id: s._id }, {
+                    $set: {
+                      ...s
+                    }
+                  })
+                })
+                .catch(err => {
+                  console.log(err)
+                })
+              Order.update({ _id: o._id },
+                {
+                  $set: {
+                    ...o
+                  }
+                })
+            }
+          })
+      }, 10000)
+
       res.json(order)
     }
   })
 }
 
-action.deleteOrder = function(req, res){
+action.deleteOrder = function (req, res) {
   Order.findOneAndRemove({
     _id: req.params.id
   })
@@ -314,7 +364,7 @@ action.deleteOrder = function(req, res){
     .catch(err => res.json(err))
 }
 
-action.updateOrder = function(req, res){
+action.updateOrder = function (req, res) {
   Order.findOneAndUpdate({ _id: req.params.id }
     , {
       $set: {
@@ -327,19 +377,19 @@ action.updateOrder = function(req, res){
     .catch(err => res.json(err))
 }
 
-action.getOrders = function(req, res){
-  const {_id: userId} = req.session.user
-  Order.find({userId})
+action.getOrders = function (req, res) {
+  const { _id: userId } = req.session.user
+  Order.find({ userId })
     .sort({ updateAt: -1 })
     .then(orders => {
       res.json(orders)
     })
-    .catch(err => {                  
+    .catch(err => {
       res.json(err)
     })
 }
 
-action.getOrderById = function(req, res){
+action.getOrderById = function (req, res) {
   Order.findById(req.params.id)
     .then(order => {
       res.json(order)
@@ -359,11 +409,11 @@ action.addCinema = function (req, res) {
   })
 }
 
-action.getCinemaByMovieId = function(req, res){
+action.getCinemaByMovieId = function (req, res) {
   const movieId = req.params.id
   const { date, address, detailAddress } = req.query
   const cinemaAddress = JSON.parse(address)
-  console.log(1,cinemaAddress.province)
+  console.log(1, cinemaAddress.province)
   const oneDaySeconds = 24 * 60 * 60
   const now = (new Date()).getTime()
   const scope = {
@@ -371,11 +421,11 @@ action.getCinemaByMovieId = function(req, res){
     $lte: ''
   }
 
-  if(parseInt(date) <= now) {
+  if (parseInt(date) <= now) {
     // 今日票
     scope.$gte = now
     scope.$lte = parseInt(date) + oneDaySeconds * 1000
-  }else{
+  } else {
     //非今日票
     scope.$gte = parseInt(date)
     scope.$lte = parseInt(date) + oneDaySeconds * 1000
@@ -391,9 +441,9 @@ action.getCinemaByMovieId = function(req, res){
     "address.city": cinemaAddress.city,
     "address.district": cinemaAddress.district
   })
-    .then(cinema=>{
+    .then(cinema => {
       const cinemaIdList = []
-      for(const i in cinema){
+      for (const i in cinema) {
         cinemaIdList.push(cinema[i]._id)
       }
       Schedule.find({
@@ -402,18 +452,18 @@ action.getCinemaByMovieId = function(req, res){
         },
         showTime: scope
       })
-        .then(schedule=>{
-          
+        .then(schedule => {
+
           res.json({
             schedule,
             cinema
           })
         })
-        .catch(err=>{
+        .catch(err => {
           res.json(err)
         })
     })
-    .catch(err=>{
+    .catch(err => {
       res.json(err)
     })
 }
@@ -429,71 +479,73 @@ action.applyCinema = function (req, res) {
 }
 action.getApplyList = function (req, res) {
   Cinema.find({})
-    .sort({updateAt:-1})
-    .then((applyList)=>{
+    .sort({ updateAt: -1 })
+    .then((applyList) => {
       res.json(applyList)
     })
-    .catch(err=>{
+    .catch(err => {
       res.json(err)
     })
 }
 action.getCinemaByUserId = function (req, res) {
-  if(!req.session.user) return
+  if (!req.session.user) return
   const userId = req.session.user._id
   Cinema.find({
     userId: userId
-  }).sort({updateAt: -1})
-    .then(cinemaList=>{
+  }).sort({ updateAt: -1 })
+    .then(cinemaList => {
       res.json(cinemaList)
     })
-    .catch(err=>{
+    .catch(err => {
       res.json(err)
     })
 }
 action.handleApply = function (req, res) {
-  Cinema.update({_id:req.params.id},{$set:{
-    apply: true
-  }})
-    .then(apply=>{
+  Cinema.update({ _id: req.params.id }, {
+    $set: {
+      apply: true
+    }
+  })
+    .then(apply => {
       res.json(apply)
     })
-    .catch(err=>{
+    .catch(err => {
       res.json(err)
     })
 }
 action.getMovieByNameStr = function (req, res) {
   const name = req.params.name
   const reg = new RegExp(name)
-  Movie.find({nm:{$regex: reg}})
-    .then(movie=>{
+  Movie.find({ nm: { $regex: reg } })
+    .then(movie => {
       res.json(movie)
     })
-    .catch(err=>{
+    .catch(err => {
       res.json(err)
     })
 }
 
 action.addMovieForCinema = function (req, res) {
-  const {movies, cinemaId} = req.body
-  Cinema.update({_id: cinemaId},{
+  const { movies, cinemaId } = req.body
+  Cinema.update({ _id: cinemaId }, {
     $push: {
       movies: movies
     }
   })
-    .then(cinema=>{
+    .then(cinema => {
       res.json(cinema)
     })
-    .catch(err=>{
+    .catch(err => {
       res.json(err)
     })
 }
 
-function createSalt(){
+function createSalt() {
   const randomString = '1,2,3,4,5,6,7,8,9,0,q,w,e,r,t,y,u,i,o,p,a,s,d,f,g,h,j,k,l,z,x,c,v,b,n,m'
   const randomArray = randomString.split(',')
   const max = randomArray.length
   let str = ''
-  for(let i =0;i<max;i++){
+  for (let i = 0; i < max; i++) {
     str += randomArray[Math.floor(Math.random() * max)]
   }
   return str

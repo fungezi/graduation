@@ -134,7 +134,6 @@ export default {
       //     desc: String
       // }
 
-      const {_id: scheduleId} = this.schedule[this.curSchedule]
       const seatHasSale = this.seatsHasSelected
       const scheduleData = {
         seatHasSale
@@ -145,6 +144,7 @@ export default {
         showTime,
         hallId,
         hallName,
+        _id: scheduleId,
         cinema:{
           name: cinemaName,
           _id: cinemaId
@@ -152,6 +152,8 @@ export default {
       } = this.schedule[this.curSchedule]
       const orderData = {
           order: {
+            scheduleId,
+            status: 1,
             movieId,
             cinemaId,
             cinemaName,
