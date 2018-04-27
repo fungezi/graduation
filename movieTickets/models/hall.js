@@ -1,17 +1,17 @@
 const mongoose = require('mongoose')
 
-const hallSchema = mongoose.Schema({
-    createdAt: { type: Date, default: Date.now },
-    updateAt: { type: Date, default: Date.now },
-    cinemaId: String,
-    cinemaName: String,
-    hallName: String,
-    section: {
-      cols: Number,
-      rows: Number,
-      seats: [[{
-        seatNo: Boolean,
-        isSale: Boolean
+const hallSchema = mongoose.Schema({ // 大厅集合
+    createdAt: { type: Date, default: Date.now }, // 创建时间
+    updateAt: { type: Date, default: Date.now }, // 更新时间
+    cinemaId: String, // 影院 ID
+    cinemaName: String, // 影院名
+    hallName: String, // 大厅名
+    section: { // 座位信息
+      cols: Number, // 列数
+      rows: Number, // 行数
+      seats: [[{ // 座位状态
+        seatNo: Boolean, // 损坏
+        isSale: Boolean // 售卖
       }]]
     }
 })

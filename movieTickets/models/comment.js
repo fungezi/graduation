@@ -1,21 +1,21 @@
 const mongoose = require('mongoose')
 
-const commentSchema = mongoose.Schema({
-    createdAt: { type: Date, default: Date.now },
-    updateAt: { type: Date, default: Date.now },
-    content: String,
-    userId: String,
-    userName: String,
-    movieId: String,
-    goodNum: {
-        type: Number,
-        default: 0
+const commentSchema = mongoose.Schema({ // 评论集合
+    createdAt: { type: Date, default: Date.now }, // 创建时间
+    updateAt: { type: Date, default: Date.now }, // 更新时间
+    content: String, // 评论内容
+    userId: String, // 用户 ID
+    userName: String, // 用户名
+    movieId: String, // 电影 ID
+    goodNum: { // 点赞数
+        type: Number, // 类型
+        default: 0 // 默认值
     },
     // type: Number //1：评论 2：回复
-    replyTarget: {
-        userId: String,
-        userName: String,
-        content: String
+    replyTarget: { // 回复对象
+        userId: String, // 用户 ID
+        userName: String, // 用户名
+        content: String // 内容
     } 
 })
 
